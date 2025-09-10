@@ -14,7 +14,198 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      carbon_logs: {
+        Row: {
+          created_at: string | null
+          energy_emissions: number | null
+          food_emissions: number | null
+          id: string
+          log_date: string
+          total_emissions: number | null
+          travel_emissions: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          energy_emissions?: number | null
+          food_emissions?: number | null
+          id?: string
+          log_date: string
+          total_emissions?: number | null
+          travel_emissions?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          energy_emissions?: number | null
+          food_emissions?: number | null
+          id?: string
+          log_date?: string
+          total_emissions?: number | null
+          travel_emissions?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      leaderboard: {
+        Row: {
+          avg_daily_emissions: number | null
+          created_at: string | null
+          id: string
+          monthly_points: number | null
+          rank_position: number | null
+          total_points: number | null
+          updated_at: string | null
+          user_id: string
+          username: string
+          week_start: string
+          weekly_points: number | null
+        }
+        Insert: {
+          avg_daily_emissions?: number | null
+          created_at?: string | null
+          id?: string
+          monthly_points?: number | null
+          rank_position?: number | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id: string
+          username: string
+          week_start: string
+          weekly_points?: number | null
+        }
+        Update: {
+          avg_daily_emissions?: number | null
+          created_at?: string | null
+          id?: string
+          monthly_points?: number | null
+          rank_position?: number | null
+          total_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+          username?: string
+          week_start?: string
+          weekly_points?: number | null
+        }
+        Relationships: []
+      }
+      rewards: {
+        Row: {
+          description: string | null
+          earned_at: string | null
+          id: string
+          metadata: Json | null
+          points_awarded: number | null
+          reward_name: string
+          reward_type: string
+          user_id: string
+        }
+        Insert: {
+          description?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata?: Json | null
+          points_awarded?: number | null
+          reward_name: string
+          reward_type: string
+          user_id: string
+        }
+        Update: {
+          description?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata?: Json | null
+          points_awarded?: number | null
+          reward_name?: string
+          reward_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          current_streak: number | null
+          display_name: string | null
+          email: string
+          id: string
+          total_points: number | null
+          updated_at: string | null
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          display_name?: string | null
+          email: string
+          id?: string
+          total_points?: number | null
+          updated_at?: string | null
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          current_streak?: number | null
+          display_name?: string | null
+          email?: string
+          id?: string
+          total_points?: number | null
+          updated_at?: string | null
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      weekly_reports: {
+        Row: {
+          avg_daily_emissions: number | null
+          created_at: string | null
+          id: string
+          improvement_percentage: number | null
+          points_earned: number | null
+          report_data: Json | null
+          streak_days: number | null
+          total_emissions: number | null
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Insert: {
+          avg_daily_emissions?: number | null
+          created_at?: string | null
+          id?: string
+          improvement_percentage?: number | null
+          points_earned?: number | null
+          report_data?: Json | null
+          streak_days?: number | null
+          total_emissions?: number | null
+          user_id: string
+          week_end: string
+          week_start: string
+        }
+        Update: {
+          avg_daily_emissions?: number | null
+          created_at?: string | null
+          id?: string
+          improvement_percentage?: number | null
+          points_earned?: number | null
+          report_data?: Json | null
+          streak_days?: number | null
+          total_emissions?: number | null
+          user_id?: string
+          week_end?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
