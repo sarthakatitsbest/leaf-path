@@ -133,6 +133,7 @@ export type Database = {
           display_name: string | null
           email: string
           id: string
+          points: number | null
           total_points: number | null
           updated_at: string | null
           user_id: string
@@ -145,6 +146,7 @@ export type Database = {
           display_name?: string | null
           email: string
           id?: string
+          points?: number | null
           total_points?: number | null
           updated_at?: string | null
           user_id: string
@@ -157,6 +159,7 @@ export type Database = {
           display_name?: string | null
           email?: string
           id?: string
+          points?: number | null
           total_points?: number | null
           updated_at?: string | null
           user_id?: string
@@ -213,6 +216,10 @@ export type Database = {
     Functions: {
       increment_user_points: {
         Args: { points_to_add: number; user_id: string }
+        Returns: undefined
+      }
+      upsert_leaderboard: {
+        Args: { p_points: number; p_user_id: string }
         Returns: undefined
       }
     }
