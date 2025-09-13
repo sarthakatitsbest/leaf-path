@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { BarChart3, TrendingUp, Users, Award, Calendar, Zap, Car, Utensils } from 'lucide-react';
+import CarbonEntryForm from '@/components/CarbonEntryForm';
+import LeaderboardCard from '@/components/LeaderboardCard';
 
 interface UserProfile {
   display_name: string;
@@ -146,8 +148,13 @@ export default function Dashboard() {
             </Card>
           </div>
 
+          {/* Carbon Entry Form */}
+          <div className="mb-8">
+            <CarbonEntryForm onSubmitSuccess={fetchUserData} />
+          </div>
+
           {/* Detailed Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Recent Emissions */}
             <Card>
               <CardHeader>
@@ -260,6 +267,9 @@ export default function Dashboard() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Leaderboard */}
+            <LeaderboardCard />
           </div>
         </div>
       </div>
