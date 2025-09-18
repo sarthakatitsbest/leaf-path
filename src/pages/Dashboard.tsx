@@ -6,6 +6,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { BarChart3, TrendingUp, Users, Award, Calendar, Zap, Car, Utensils } from 'lucide-react';
 import CarbonEntryForm from '@/components/CarbonEntryForm';
 import LeaderboardCard from '@/components/LeaderboardCard';
+import AiChatWidget from '@/components/AiChatWidget';
+import ReceiptScanner from '@/components/ReceiptScanner';
 
 interface UserProfile {
   display_name: string;
@@ -148,9 +150,10 @@ export default function Dashboard() {
             </Card>
           </div>
 
-          {/* Carbon Entry Form */}
-          <div className="mb-8">
+          {/* Carbon Entry Form and Receipt Scanner */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <CarbonEntryForm onSubmitSuccess={fetchUserData} />
+            <ReceiptScanner />
           </div>
 
           {/* Detailed Cards */}
@@ -273,6 +276,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      
+      {/* AI Chat Widget - positioned fixed */}
+      <AiChatWidget userProfile={profile} recentData={carbonLogs.slice(0, 3)} />
     </div>
   );
 }
