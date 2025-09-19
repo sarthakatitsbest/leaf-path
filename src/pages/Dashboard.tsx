@@ -2,12 +2,15 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navbar } from '@/components/Navbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { BarChart3, TrendingUp, Users, Award, Calendar, Zap, Car, Utensils } from 'lucide-react';
 import CarbonEntryForm from '@/components/CarbonEntryForm';
 import LeaderboardCard from '@/components/LeaderboardCard';
 import AiChatWidget from '@/components/AiChatWidget';
 import ReceiptScanner from '@/components/ReceiptScanner';
+import ScoreCard from '@/components/ScoreCard';
+import LeaderboardWidget from '@/components/LeaderboardWidget';
 
 interface UserProfile {
   display_name: string;
@@ -81,203 +84,287 @@ export default function Dashboard() {
   const avgDailyEmissions = carbonLogs.length > 0 ? totalEmissions / carbonLogs.length : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/20 to-teal-50/20">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">
-              Dashboard
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="container mx-auto px-6 py-8"
+      >
+        <div className="max-w-7xl mx-auto">
+          {/* Welcome header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <h1 className="text-4xl font-poppins font-black gradient-teal-lime bg-clip-text text-transparent mb-2">
+              Welcome back! 👋
             </h1>
-            <p className="text-muted-foreground">
-              Track your environmental impact and progress
+            <p className="text-muted-foreground font-inter text-lg">
+              Track your eco-journey and make a positive impact
             </p>
+          </motion.div>
+
+          {/* Main dashboard grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+            {/* Left column - Score card */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+              className="lg:col-span-4"
+            >
+              <ScoreCard 
+                dailyScore={avgDailyEmissions} 
+                weeklyTotal={totalEmissions} 
+                improvement={15} 
+              />
+            </motion.div>
+
+            {/* Center column - Overview cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="lg:col-span-8 grid grid-cols-2 gap-4"
+            >
+              <motion.div whileHover={{ y: -4, scale: 1.02 }}>
+                <Card className="glass rounded-2xl border-0 shadow-lg">
+                  <div className="absolute inset-0 gradient-warm opacity-5 rounded-2xl" />
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                    <CardTitle className="text-sm font-poppins font-semibold">Total Points</CardTitle>
+                    <Award className="h-5 w-5 text-warning" />
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-poppins font-black text-primary">{profile?.total_points || 0}</div>
+                    <p className="text-xs text-muted-foreground">Keep it up! 🌟</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div whileHover={{ y: -4, scale: 1.02 }} transition={{ delay: 0.1 }}>
+                <Card className="glass rounded-2xl border-0 shadow-lg">
+                  <div className="absolute inset-0 gradient-purple-pink opacity-5 rounded-2xl" />
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                    <CardTitle className="text-sm font-poppins font-semibold">Streak</CardTitle>
+                    <Calendar className="h-5 w-5 text-accent" />
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-poppins font-black text-primary">{profile?.current_streak || 0}</div>
+                    <p className="text-xs text-muted-foreground">Days tracked 🔥</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div whileHover={{ y: -4, scale: 1.02 }} transition={{ delay: 0.2 }}>
+                <Card className="glass rounded-2xl border-0 shadow-lg">
+                  <div className="absolute inset-0 gradient-teal-lime opacity-5 rounded-2xl" />
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                    <CardTitle className="text-sm font-poppins font-semibold">Total Logs</CardTitle>
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-poppins font-black text-primary">{carbonLogs.length}</div>
+                    <p className="text-xs text-muted-foreground">Activities logged 📊</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div whileHover={{ y: -4, scale: 1.02 }} transition={{ delay: 0.3 }}>
+                <Card className="glass rounded-2xl border-0 shadow-lg">
+                  <div className="absolute inset-0 gradient-warm opacity-5 rounded-2xl" />
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                    <CardTitle className="text-sm font-poppins font-semibold">Weekly Avg</CardTitle>
+                    <TrendingUp className="h-5 w-5 text-secondary" />
+                  </CardHeader>
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-poppins font-black text-primary">{avgDailyEmissions.toFixed(1)}</div>
+                    <p className="text-xs text-muted-foreground">kg CO₂/day 🌱</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
           </div>
 
-          {/* Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Points</CardTitle>
-                <Award className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{profile?.total_points || 0}</div>
-                <p className="text-xs text-muted-foreground">
-                  Keep up the great work!
-                </p>
-              </CardContent>
-            </Card>
+          {/* Action Forms and New Widgets */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Entry Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <CarbonEntryForm onSubmitSuccess={fetchUserData} />
+            </motion.div>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{profile?.current_streak || 0} days</div>
-                <p className="text-xs text-muted-foreground">
-                  Days of consistent tracking
-                </p>
-              </CardContent>
-            </Card>
+            {/* Receipt Scanner */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+            >
+              <ReceiptScanner />
+            </motion.div>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg Daily Emissions</CardTitle>
-                <TrendingUp className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{avgDailyEmissions.toFixed(1)} kg</div>
-                <p className="text-xs text-muted-foreground">
-                  CO₂ equivalent per day
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Logs</CardTitle>
-                <BarChart3 className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{carbonLogs.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  Recorded activities
-                </p>
-              </CardContent>
-            </Card>
+            {/* New Leaderboard Widget */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              <LeaderboardWidget />
+            </motion.div>
           </div>
 
-          {/* Carbon Entry Form and Receipt Scanner */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <CarbonEntryForm onSubmitSuccess={fetchUserData} />
-            <ReceiptScanner />
-          </div>
-
-          {/* Detailed Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Detailed Analytics Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Emissions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Emissions</CardTitle>
-                <CardDescription>Your last 7 days of carbon tracking</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {carbonLogs.length > 0 ? (
-                    carbonLogs.map((log, index) => (
-                      <div key={index} className="flex items-center justify-between border-b pb-2 last:border-b-0">
-                        <div>
-                          <p className="text-sm font-medium">
-                            {new Date(log.log_date).toLocaleDateString()}
-                          </p>
-                          <div className="flex space-x-4 text-xs text-muted-foreground">
-                            <span className="flex items-center">
-                              <Car className="h-3 w-3 mr-1" />
-                              {log.travel_emissions?.toFixed(1) || 0} kg
-                            </span>
-                            <span className="flex items-center">
-                              <Zap className="h-3 w-3 mr-1" />
-                              {log.energy_emissions?.toFixed(1) || 0} kg
-                            </span>
-                            <span className="flex items-center">
-                              <Utensils className="h-3 w-3 mr-1" />
-                              {log.food_emissions?.toFixed(1) || 0} kg
-                            </span>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+            >
+              <Card className="glass rounded-3xl border-0 shadow-xl">
+                <div className="absolute inset-0 gradient-teal-lime opacity-5 rounded-3xl" />
+                <CardHeader className="relative z-10">
+                  <CardTitle className="font-poppins font-bold">Recent Emissions</CardTitle>
+                  <CardDescription className="font-inter">Your last 7 days of carbon tracking</CardDescription>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  <div className="space-y-4">
+                    {carbonLogs.length > 0 ? (
+                      carbonLogs.map((log, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.1 * index }}
+                          className="flex items-center justify-between p-3 bg-white/30 rounded-2xl border-b pb-2 last:border-b-0"
+                        >
+                          <div>
+                            <p className="text-sm font-poppins font-semibold">
+                              {new Date(log.log_date).toLocaleDateString()}
+                            </p>
+                            <div className="flex space-x-3 text-xs text-muted-foreground mt-1">
+                              <span className="flex items-center">
+                                <Car className="h-3 w-3 mr-1" />
+                                {log.travel_emissions?.toFixed(1) || 0}
+                              </span>
+                              <span className="flex items-center">
+                                <Zap className="h-3 w-3 mr-1" />
+                                {log.energy_emissions?.toFixed(1) || 0}
+                              </span>
+                              <span className="flex items-center">
+                                <Utensils className="h-3 w-3 mr-1" />
+                                {log.food_emissions?.toFixed(1) || 0}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-bold">
-                            {log.total_emissions?.toFixed(1) || 0} kg
-                          </p>
-                          <p className="text-xs text-muted-foreground">CO₂</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-center text-muted-foreground py-8">
-                      No emissions logged yet. Start tracking your carbon footprint!
-                    </p>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                          <div className="text-right">
+                            <p className="text-sm font-poppins font-bold text-primary">
+                              {log.total_emissions?.toFixed(1) || 0} kg
+                            </p>
+                            <p className="text-xs text-muted-foreground">CO₂</p>
+                          </div>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <p className="text-center text-muted-foreground py-8 font-inter">
+                        No emissions logged yet. Start tracking your carbon footprint! 🌱
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            {/* Profile Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile Summary</CardTitle>
-                <CardDescription>Your environmental impact profile</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
+            {/* Enhanced Profile Summary */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0 }}
+            >
+              <Card className="glass rounded-3xl border-0 shadow-xl">
+                <div className="absolute inset-0 gradient-purple-pink opacity-5 rounded-3xl" />
+                <CardHeader className="relative z-10">
+                  <CardTitle className="font-poppins font-bold">Profile Summary</CardTitle>
+                  <CardDescription className="font-inter">Your environmental impact profile</CardDescription>
+                </CardHeader>
+                <CardContent className="relative z-10 space-y-6">
                   <div>
-                    <h4 className="font-medium mb-2">Display Name</h4>
-                    <p className="text-muted-foreground">
+                    <h4 className="font-poppins font-semibold mb-2 text-primary">Display Name</h4>
+                    <p className="text-muted-foreground font-inter">
                       {profile?.display_name || 'Not set'}
                     </p>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-2">Account</h4>
-                    <p className="text-muted-foreground">{user?.email}</p>
+                    <h4 className="font-poppins font-semibold mb-2 text-primary">Account</h4>
+                    <p className="text-muted-foreground font-inter">{user?.email}</p>
                   </div>
                   
                   <div>
-                    <h4 className="font-medium mb-2">Environmental Impact</h4>
+                    <h4 className="font-poppins font-semibold mb-2 text-primary">Environmental Impact</h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">Total Emissions</p>
-                        <p className="font-medium">{totalEmissions.toFixed(1)} kg CO₂</p>
+                      <div className="p-3 bg-white/30 rounded-2xl">
+                        <p className="text-muted-foreground font-inter">Total Emissions</p>
+                        <p className="font-poppins font-bold text-primary">{totalEmissions.toFixed(1)} kg CO₂</p>
                       </div>
-                      <div>
-                        <p className="text-muted-foreground">Days Tracked</p>
-                        <p className="font-medium">{carbonLogs.length} days</p>
+                      <div className="p-3 bg-white/30 rounded-2xl">
+                        <p className="text-muted-foreground font-inter">Days Tracked</p>
+                        <p className="font-poppins font-bold text-primary">{carbonLogs.length} days</p>
                       </div>
                     </div>
                   </div>
 
                   {carbonLogs.length > 0 && (
                     <div>
-                      <h4 className="font-medium mb-2">Breakdown (Last 7 Days)</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="flex items-center">
-                            <Car className="h-3 w-3 mr-2" />
+                      <h4 className="font-poppins font-semibold mb-3 text-primary">Breakdown (Last 7 Days)</h4>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between items-center p-2 bg-white/20 rounded-xl">
+                          <span className="flex items-center font-inter">
+                            <Car className="h-4 w-4 mr-2 text-primary" />
                             Travel
                           </span>
-                          <span>{carbonLogs.reduce((sum, log) => sum + (log.travel_emissions || 0), 0).toFixed(1)} kg</span>
+                          <span className="font-poppins font-bold">{carbonLogs.reduce((sum, log) => sum + (log.travel_emissions || 0), 0).toFixed(1)} kg</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="flex items-center">
-                            <Zap className="h-3 w-3 mr-2" />
+                        <div className="flex justify-between items-center p-2 bg-white/20 rounded-xl">
+                          <span className="flex items-center font-inter">
+                            <Zap className="h-4 w-4 mr-2 text-secondary" />
                             Energy
                           </span>
-                          <span>{carbonLogs.reduce((sum, log) => sum + (log.energy_emissions || 0), 0).toFixed(1)} kg</span>
+                          <span className="font-poppins font-bold">{carbonLogs.reduce((sum, log) => sum + (log.energy_emissions || 0), 0).toFixed(1)} kg</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="flex items-center">
-                            <Utensils className="h-3 w-3 mr-2" />
+                        <div className="flex justify-between items-center p-2 bg-white/20 rounded-xl">
+                          <span className="flex items-center font-inter">
+                            <Utensils className="h-4 w-4 mr-2 text-accent" />
                             Food
                           </span>
-                          <span>{carbonLogs.reduce((sum, log) => sum + (log.food_emissions || 0), 0).toFixed(1)} kg</span>
+                          <span className="font-poppins font-bold">{carbonLogs.reduce((sum, log) => sum + (log.food_emissions || 0), 0).toFixed(1)} kg</span>
                         </div>
                       </div>
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </motion.div>
 
-            {/* Leaderboard */}
-            <LeaderboardCard />
+            {/* Classic Leaderboard */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.1 }}
+            >
+              <LeaderboardCard />
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
       
-      {/* AI Chat Widget - positioned fixed */}
+      {/* Enhanced AI Chat Widget */}
       <AiChatWidget userProfile={profile} recentData={carbonLogs.slice(0, 3)} />
     </div>
   );
