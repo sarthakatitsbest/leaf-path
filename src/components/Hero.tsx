@@ -2,9 +2,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Leaf, Zap, Users } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Hero: React.FC = () => {
+  const navigate = useNavigate();
+
+  const goToAuth = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('[Hero] Start Tracking clicked -> navigating to /auth');
+    navigate('/auth');
+  };
+
   return (
     <section className="relative overflow-hidden py-20 px-6">
       {/* Animated background gradient */}
@@ -64,15 +72,15 @@ const Hero: React.FC = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link to="/auth">
-                <Button 
-                  size="lg" 
-                  className="gradient-teal-lime text-white font-poppins font-semibold px-8 py-6 text-lg rounded-2xl shadow-2xl border-0 animate-glow"
-                >
-                  <Zap className="mr-2 h-5 w-5" />
-                  Start Tracking
-                </Button>
-              </Link>
+              <Button 
+                onClick={goToAuth}
+                size="lg" 
+                data-testid="start-tracking-btn"
+                className="gradient-teal-lime text-white font-poppins font-semibold px-8 py-6 text-lg rounded-2xl shadow-2xl border-0 animate-glow"
+              >
+                <Zap className="mr-2 h-5 w-5" />
+                Start Tracking
+              </Button>
             </motion.div>
             
             <motion.div
