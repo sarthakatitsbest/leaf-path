@@ -58,37 +58,39 @@ export default function CarbonEntryForm({ onSubmitSuccess }: { onSubmitSuccess?:
         }];
       }
 
-      // Add energy data if provided
-      if (electricityKwh || gasUnits) {
-        entry.energy = {};
-        if (electricityKwh && Number(electricityKwh) > 0) {
-          entry.energy.electricity_kwh = Number(electricityKwh);
-        }
-        if (gasUnits && Number(gasUnits) > 0) {
-          entry.energy.gas_units = Number(gasUnits);
-        }
-      }
-
-      // Add food data if provided
-      if (meatMeals || vegetarianMeals) {
-        entry.food = {};
-        if (meatMeals && Number(meatMeals) > 0) {
-          entry.food.meat_meals = Number(meatMeals);
-        }
-        if (vegetarianMeals && Number(vegetarianMeals) > 0) {
-          entry.food.vegetarian_meals = Number(vegetarianMeals);
-        }
-      }
-
-      // Add waste data if provided
-      if (wasteKg && Number(wasteKg) > 0) {
-        entry.waste = {
-          kg: Number(wasteKg)
+      // Add energy data if provided  
+      const elecValue = electricityKwh ? Number(electricityKwh) : 0;
+      const gasValue = gasUnits ? Number(gasUnits) : 0;
+      if (elecValue > 0 || gasValue > 0) {
+        entry.energy = {
+          electricity_kwh: elecValue > 0 ? elecValue : undefined,
+          gas_units: gasValue > 0 ? gasValue : undefined
         };
       }
 
+      // Add food data if provided
+      const meatValue = meatMeals ? Number(meatMeals) : 0;
+      const vegValue = vegetarianMeals ? Number(vegetarianMeals) : 0;
+      if (meatValue > 0 || vegValue > 0) {
+        entry.food = {
+          meat_meals: meatValue > 0 ? meatValue : undefined,
+          vegetarian_meals: vegValue > 0 ? vegValue : undefined
+        };
+      }
+
+      // Add waste data if provided
+      const wasteValue = wasteKg ? Number(wasteKg) : 0;
+      if (wasteValue > 0) {
+        entry.waste = { kg: wasteValue };
+      }
+
+      // Ensure we have at least some data
+      if (Object.keys(entry).length === 0) {
+        throw new Error('Please enter at least one value to track your carbon footprint');
+      }
+
       const response = await supabase.functions.invoke('carbon-submit', {
-        body: { entry },
+        body: JSON.stringify({ entry }),
         headers: {
           Authorization: `Bearer ${session.access_token}`,
           'Content-Type': 'application/json',

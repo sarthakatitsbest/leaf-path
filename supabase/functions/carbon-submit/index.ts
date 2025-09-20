@@ -96,6 +96,25 @@ serve(async (req) => {
       throw new Error("No authorization header");
     }
 
+    // Get request body text and validate
+    const bodyText = await req.text();
+    if (!bodyText || bodyText.trim() === '') {
+      throw new Error("Empty request body");
+    }
+
+    let requestData;
+    try {
+      requestData = JSON.parse(bodyText);
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError);
+      throw new Error("Invalid JSON in request body");
+    }
+
+    const { entry }: { entry: CarbonEntry } = requestData;
+    if (!entry || typeof entry !== 'object') {
+      throw new Error("Missing or invalid entry data");
+    }
+
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -106,11 +125,6 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
     if (userError || !user) {
       throw new Error("User not authenticated");
-    }
-
-    const { entry }: { entry: CarbonEntry } = await req.json();
-    if (!entry) {
-      throw new Error("Missing entry data");
     }
 
     // Get user profile
