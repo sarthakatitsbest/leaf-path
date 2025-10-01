@@ -90,11 +90,7 @@ export default function CarbonEntryForm({ onSubmitSuccess }: { onSubmitSuccess?:
       }
 
       const response = await supabase.functions.invoke('carbon-submit', {
-        body: JSON.stringify({ entry }),
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-        },
+        body: { entry }
       });
 
       if (response.error) {

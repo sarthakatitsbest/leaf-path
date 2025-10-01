@@ -96,21 +96,8 @@ serve(async (req) => {
       throw new Error("No authorization header");
     }
 
-    // Get request body text and validate
-    const bodyText = await req.text();
-    if (!bodyText || bodyText.trim() === '') {
-      throw new Error("Empty request body");
-    }
-
-    let requestData;
-    try {
-      requestData = JSON.parse(bodyText);
-    } catch (parseError) {
-      console.error("JSON parse error:", parseError);
-      throw new Error("Invalid JSON in request body");
-    }
-
-    const { entry }: { entry: CarbonEntry } = requestData;
+    // Parse JSON body
+    const { entry }: { entry: CarbonEntry } = await req.json();
     if (!entry || typeof entry !== 'object') {
       throw new Error("Missing or invalid entry data");
     }
