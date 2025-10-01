@@ -128,7 +128,7 @@ serve(async (req) => {
     // Calculate CO2 emissions
     const co2 = estimateFromEntry(entry);
 
-    // Insert carbon log
+    // Insert carbon log (total_emissions is a generated column)
     const { data: carbonLog, error: insertError } = await supabaseClient
       .from("carbon_logs")
       .insert([{
@@ -142,7 +142,6 @@ serve(async (req) => {
                          (entry.energy?.gas_units || 0) * EMISSION_FACTORS.energy.gas,
         food_emissions: (entry.food?.meat_meals || 0) * EMISSION_FACTORS.food.meat_meal + 
                        (entry.food?.vegetarian_meals || 0) * EMISSION_FACTORS.food.vegetarian_meal,
-        total_emissions: co2,
       }])
       .select()
       .single();
