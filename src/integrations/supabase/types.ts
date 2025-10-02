@@ -20,7 +20,9 @@ export type Database = {
           energy_emissions: number | null
           food_emissions: number | null
           id: string
+          lat: number | null
           log_date: string
+          lon: number | null
           total_emissions: number | null
           travel_emissions: number | null
           updated_at: string | null
@@ -31,7 +33,9 @@ export type Database = {
           energy_emissions?: number | null
           food_emissions?: number | null
           id?: string
+          lat?: number | null
           log_date: string
+          lon?: number | null
           total_emissions?: number | null
           travel_emissions?: number | null
           updated_at?: string | null
@@ -42,11 +46,40 @@ export type Database = {
           energy_emissions?: number | null
           food_emissions?: number | null
           id?: string
+          lat?: number | null
           log_date?: string
+          lon?: number | null
           total_emissions?: number | null
           travel_emissions?: number | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      city_air_cache: {
+        Row: {
+          city_key: string
+          data: Json
+          fetched_at: string | null
+          id: string
+          lat: number
+          lon: number
+        }
+        Insert: {
+          city_key: string
+          data: Json
+          fetched_at?: string | null
+          id?: string
+          lat: number
+          lon: number
+        }
+        Update: {
+          city_key?: string
+          data?: Json
+          fetched_at?: string | null
+          id?: string
+          lat?: number
+          lon?: number
         }
         Relationships: []
       }
