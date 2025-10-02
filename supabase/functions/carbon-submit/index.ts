@@ -22,6 +22,8 @@ interface CarbonEntry {
   waste?: {
     kg?: number;
   };
+  lat?: number;
+  lon?: number;
 }
 
 // Carbon emission factors (kg CO2 per unit)
@@ -142,6 +144,8 @@ serve(async (req) => {
                          (entry.energy?.gas_units || 0) * EMISSION_FACTORS.energy.gas,
         food_emissions: (entry.food?.meat_meals || 0) * EMISSION_FACTORS.food.meat_meal + 
                        (entry.food?.vegetarian_meals || 0) * EMISSION_FACTORS.food.vegetarian_meal,
+        lat: entry.lat,
+        lon: entry.lon,
       }])
       .select()
       .single();
