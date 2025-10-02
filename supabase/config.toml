@@ -17,3 +17,15 @@ verify_jwt = true
 
 [functions.receipt-ocr]
 verify_jwt = true
+
+[functions.carbon-submit]
+verify_jwt = true
+
+[functions.air-quality]
+verify_jwt = true
+
+[functions.carbon-aggregates]
+verify_jwt = true
+
+[functions.carbon-compare]
+verify_jwt = true
