@@ -11,6 +11,9 @@ import AiChatWidget from '@/components/AiChatWidget';
 import ReceiptScanner from '@/components/ReceiptScanner';
 import ScoreCard from '@/components/ScoreCard';
 import LeaderboardWidget from '@/components/LeaderboardWidget';
+import MapCompare from '@/components/MapCompare';
+import EmissionsChart from '@/components/EmissionsChart';
+import CarbonInsights from '@/components/CarbonInsights';
 
 interface UserProfile {
   display_name: string;
@@ -24,6 +27,8 @@ interface CarbonLog {
   travel_emissions: number;
   energy_emissions: number;
   food_emissions: number;
+  lat?: number;
+  lon?: number;
 }
 
 export default function Dashboard() {
@@ -54,7 +59,7 @@ export default function Dashboard() {
       // Fetch recent carbon logs
       const { data: logsData } = await supabase
         .from('carbon_logs')
-        .select('log_date, total_emissions, travel_emissions, energy_emissions, food_emissions')
+        .select('log_date, total_emissions, travel_emissions, energy_emissions, food_emissions, lat, lon')
         .eq('user_id', user?.id)
         .order('log_date', { ascending: false })
         .limit(7);
@@ -218,6 +223,59 @@ export default function Dashboard() {
               <LeaderboardWidget />
             </motion.div>
           </div>
+
+          {/* Emissions Chart and Map Integration */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Emissions Chart */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.85 }}
+            >
+              {user?.id && <EmissionsChart userId={user.id} days={7} />}
+            </motion.div>
+
+            {/* Map Comparison */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.9 }}
+            >
+              <Card className="glass rounded-3xl border-0 shadow-xl">
+                <div className="absolute inset-0 gradient-teal-lime opacity-5 rounded-3xl" />
+                <CardHeader className="relative z-10">
+                  <CardTitle className="font-poppins font-bold">Location & Air Quality</CardTitle>
+                  <CardDescription className="font-inter">Compare your emissions with your city</CardDescription>
+                </CardHeader>
+                <CardContent className="relative z-10">
+                  {carbonLogs.length > 0 && carbonLogs[0].lat && carbonLogs[0].lon && user?.id ? (
+                    <MapCompare
+                      lat={carbonLogs[0].lat}
+                      lon={carbonLogs[0].lon}
+                      userId={user.id}
+                      radiusKm={10}
+                    />
+                  ) : (
+                    <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                      <p className="text-center">
+                        Log your carbon activities with location to see the map and air quality data
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Carbon Insights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.95 }}
+            className="mb-8"
+          >
+            {user?.id && <CarbonInsights userId={user.id} />}
+          </motion.div>
 
           {/* Detailed Analytics Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
