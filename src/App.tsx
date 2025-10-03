@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import VerifyBadge from "./pages/VerifyBadge";
 import PrivateRoute from "./components/PrivateRoute";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
               </PrivateRoute>
             } />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/verify/:code" element={<VerifyBadge />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

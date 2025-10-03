@@ -67,7 +67,7 @@ export default function BadgeCertificate({ badge, userName }: BadgeCertificatePr
           Certificate of Achievement
         </text>
         
-        <text x="400" y="140" textAnchor="middle" fontSize="20" fill="#64748b">
+        <text x="400" y="140" textAnchor="middle" fontSize="20" fontWeight="600" fill="#10b981">
           Awarded by Eco Pulse AI
         </text>
 
