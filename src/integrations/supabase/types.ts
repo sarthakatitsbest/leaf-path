@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      badges: {
+        Row: {
+          certificate_url: string | null
+          challenge_id: string | null
+          created_at: string | null
+          id: string
+          issued_at: string | null
+          metadata: Json | null
+          points: number | null
+          title: string
+          user_id: string
+          verification_code: string
+        }
+        Insert: {
+          certificate_url?: string | null
+          challenge_id?: string | null
+          created_at?: string | null
+          id?: string
+          issued_at?: string | null
+          metadata?: Json | null
+          points?: number | null
+          title: string
+          user_id: string
+          verification_code: string
+        }
+        Update: {
+          certificate_url?: string | null
+          challenge_id?: string | null
+          created_at?: string | null
+          id?: string
+          issued_at?: string | null
+          metadata?: Json | null
+          points?: number | null
+          title?: string
+          user_id?: string
+          verification_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "badges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       carbon_logs: {
         Row: {
           created_at: string | null
@@ -53,6 +100,45 @@ export type Database = {
           travel_emissions?: number | null
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      challenges: {
+        Row: {
+          active: boolean | null
+          badge_icon_url: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string
+          id: string
+          points_award: number | null
+          rules: Json
+          start_date: string
+          title: string
+        }
+        Insert: {
+          active?: boolean | null
+          badge_icon_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_date: string
+          id?: string
+          points_award?: number | null
+          rules: Json
+          start_date: string
+          title: string
+        }
+        Update: {
+          active?: boolean | null
+          badge_icon_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string
+          id?: string
+          points_award?: number | null
+          rules?: Json
+          start_date?: string
+          title?: string
         }
         Relationships: []
       }

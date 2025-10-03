@@ -9,6 +9,7 @@ import CarbonEntryForm from '@/components/CarbonEntryForm';
 import LeaderboardCard from '@/components/LeaderboardCard';
 import AiChatWidget from '@/components/AiChatWidget';
 import ReceiptScanner from '@/components/ReceiptScanner';
+import BadgeGallery from '@/components/BadgeGallery';
 import ScoreCard from '@/components/ScoreCard';
 import LeaderboardWidget from '@/components/LeaderboardWidget';
 import MapCompare from '@/components/MapCompare';
@@ -419,6 +420,25 @@ export default function Dashboard() {
               <LeaderboardCard />
             </motion.div>
           </div>
+
+          {/* Badges & Certificates Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.15 }}
+            className="mt-8"
+          >
+            <Card className="glass rounded-3xl border-0 shadow-xl">
+              <div className="absolute inset-0 gradient-warm opacity-5 rounded-3xl" />
+              <CardHeader className="relative z-10">
+                <CardTitle className="font-poppins font-bold">My Badges & Certificates</CardTitle>
+                <CardDescription className="font-inter">Achievements earned from completed challenges</CardDescription>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <BadgeGallery />
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </motion.div>
       
