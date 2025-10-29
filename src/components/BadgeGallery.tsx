@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import BadgeCertificate from "./BadgeCertificate";
+import ConfettiCanvas from "./ConfettiCanvas";
 import { Award, Trophy } from "lucide-react";
 
 interface Badge {
@@ -19,6 +20,8 @@ export default function BadgeGallery() {
   const { user } = useAuth();
   const [badges, setBadges] = useState<Badge[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [confettiKey, setConfettiKey] = useState(0);
 
   useEffect(() => {
     if (!user) return;
@@ -31,6 +34,29 @@ export default function BadgeGallery() {
         .order('issued_at', { ascending: false });
 
       if (!error && data) {
+        // Detect newly-earned badges
+        try {
+          const seenKey = `ecopulse_seen_badges_${user.id}`;
+          const seenRaw = localStorage.getItem(seenKey);
+          const seenIds: string[] = seenRaw ? JSON.parse(seenRaw) : [];
+          const newBadges = data.filter(b => !seenIds.includes(b.id));
+          
+          if (newBadges.length > 0 && data.length > 0) {
+            // Trigger confetti for new badges
+            setShowConfetti(true);
+            setConfettiKey(k => k + 1);
+            
+            // Update seen badges
+            const nextSeen = Array.from(new Set([...seenIds, ...data.map(b => b.id)]));
+            localStorage.setItem(seenKey, JSON.stringify(nextSeen));
+            
+            // Stop confetti after duration
+            setTimeout(() => setShowConfetti(false), 3500);
+          }
+        } catch (err) {
+          console.warn("Badge localStorage check failed:", err);
+        }
+        
         setBadges(data);
       }
       setLoading(false);
@@ -90,6 +116,8 @@ export default function BadgeGallery() {
           </DialogContent>
         </Dialog>
       ))}
+      
+      {showConfetti && <ConfettiCanvas key={confettiKey} durationMs={3500} />}
     </div>
   );
 }
