@@ -12,9 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("user_id");
-    const days = parseInt(url.searchParams.get("days") || "7");
+    // Read from request body instead of query params
+    const { user_id: userId, days = 7 } = await req.json();
 
     if (!userId) {
       return new Response(
