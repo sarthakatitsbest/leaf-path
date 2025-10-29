@@ -6,14 +6,28 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BarChart3, Users, Award, TrendingDown, Leaf, Zap } from 'lucide-react';
 import Hero from '@/components/Hero';
+import ProblemSection from '@/components/ProblemSection';
+import SolutionSection from '@/components/SolutionSection';
+import SustainableAISection from '@/components/SustainableAISection';
+import FeaturesGrid from '@/components/FeaturesGrid';
+import GamificationSection from '@/components/GamificationSection';
+import NewsletterSection from '@/components/NewsletterSection';
+import FAQSection from '@/components/FAQSection';
 
 export default function Home() {
   const { user } = useAuth();
 
   if (!user) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-gradient-to-b from-background via-secondary/20 to-background">
         <Hero />
+        <ProblemSection />
+        <SolutionSection />
+        <SustainableAISection />
+        <FeaturesGrid />
+        <GamificationSection />
+        <NewsletterSection />
+        <FAQSection />
       </div>
     );
   }
