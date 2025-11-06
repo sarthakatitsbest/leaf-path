@@ -12,7 +12,7 @@ declare global {
 type FilterType = 'recycling' | 'ev' | 'transit';
 
 const CACHE_TTL_MS = 1000 * 60 * 5; // 5 minutes
-const API_KEY = 'AIzaSyAu2XMlIlcizlgDJC1eFrpYt0u_sj6qFko';
+const API_KEY = 'AIzaSyAu2XMlIlcizlgDJC1eFrpYt0u_sj6zZh4';
 
 export default function MapPOI() {
   const mapRef = useRef<HTMLDivElement>(null);
