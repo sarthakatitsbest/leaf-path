@@ -10,6 +10,7 @@ import LeaderboardCard from '@/components/LeaderboardCard';
 import AiChatWidget from '@/components/AiChatWidget';
 import ReceiptScanner from '@/components/ReceiptScanner';
 import BadgeGallery from '@/components/BadgeGallery';
+import MapPOI from '@/components/MapPOI';
 import ScoreCard from '@/components/ScoreCard';
 import LeaderboardWidget from '@/components/LeaderboardWidget';
 import MapCompare from '@/components/MapCompare';
@@ -436,6 +437,27 @@ export default function Dashboard() {
               </CardHeader>
               <CardContent className="relative z-10">
                 <BadgeGallery />
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Eco-Friendly POI Map Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2 }}
+            className="mt-8"
+          >
+            <Card className="glass rounded-3xl border-0 shadow-xl">
+              <div className="absolute inset-0 gradient-teal-lime opacity-5 rounded-3xl" />
+              <CardHeader className="relative z-10">
+                <CardTitle className="font-poppins font-bold">Nearby Eco-Friendly Locations</CardTitle>
+                <CardDescription className="font-inter">
+                  Find recycling centers, EV charging stations, and public transport nearby
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="relative z-10">
+                <MapPOI />
               </CardContent>
             </Card>
           </motion.div>
