@@ -40,12 +40,26 @@ export default function Dashboard() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [carbonLogs, setCarbonLogs] = useState<CarbonLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [geoCoords, setGeoCoords] = useState<{ lat: number; lon: number } | null>(null);
 
   useEffect(() => {
     if (user) {
       fetchUserData();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGeoCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+      },
+      () => {
+        // user denied or unavailable — keep null and show helper text
+      },
+      { enableHighAccuracy: false, timeout: 8000 }
+    );
+  }, []);
 
   const fetchUserData = async () => {
     try {
@@ -252,20 +266,24 @@ export default function Dashboard() {
                   <CardDescription className="font-inter">Compare your emissions with your city</CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
-                  {carbonLogs.length > 0 && carbonLogs[0].lat && carbonLogs[0].lon && user?.id ? (
-                    <MapCompare
-                      lat={carbonLogs[0].lat}
-                      lon={carbonLogs[0].lon}
-                      userId={user.id}
-                      radiusKm={10}
-                    />
-                  ) : (
-                    <div className="h-[400px] flex items-center justify-center text-muted-foreground">
-                      <p className="text-center">
-                        Log your carbon activities with location to see the map and air quality data
-                      </p>
-                    </div>
-                  )}
+                  {(() => {
+                    const logLat = carbonLogs[0]?.lat;
+                    const logLon = carbonLogs[0]?.lon;
+                    const lat = logLat ?? geoCoords?.lat;
+                    const lon = logLon ?? geoCoords?.lon;
+
+                    if (lat && lon && user?.id) {
+                      return <MapCompare lat={lat} lon={lon} userId={user.id} radiusKm={10} />;
+                    }
+
+                    return (
+                      <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                        <p className="text-center">
+                          Please allow location access to see your map and air quality.
+                        </p>
+                      </div>
+                    );
+                  })()}
                 </CardContent>
               </Card>
             </motion.div>

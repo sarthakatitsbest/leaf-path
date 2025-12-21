@@ -306,43 +306,60 @@ export default function CertificateProgress() {
 
       {/* Certificate Preview Dialog */}
       <Dialog open={showCertDialog} onOpenChange={setShowCertDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
-          <DialogHeader className="flex flex-row items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5 text-yellow-500" />
-              Your Certificate
-            </DialogTitle>
-          </DialogHeader>
-          
-          {currentCertificate && (
-            <div className="space-y-4">
-              {/* Certificate Preview */}
-              <div 
-                className="border rounded-lg overflow-hidden"
-                dangerouslySetInnerHTML={{ __html: currentCertificate.certificateHtml }}
-              />
-              
-              {/* QR Code */}
-              <div className="flex items-center justify-center gap-4 p-4 bg-muted/30 rounded-lg">
-                <img 
-                  src={currentCertificate.qrDataUrl} 
-                  alt="Verification QR Code"
-                  className="w-24 h-24 rounded-lg"
+        <DialogContent className="max-w-4xl h-[90vh] overflow-hidden p-0">
+          {/* Sticky header */}
+          <div className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b px-6 py-4">
+            <DialogHeader className="flex flex-row items-center justify-between space-y-0 text-left">
+              <DialogTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-yellow-500" />
+                Your Certificate
+              </DialogTitle>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowCertDialog(false)}
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogHeader>
+          </div>
+
+          {/* Scrollable body */}
+          <div className="flex-1 overflow-auto px-6 py-4">
+            {currentCertificate && (
+              <div className="space-y-4">
+                {/* Certificate Preview */}
+                <div
+                  className="border rounded-lg overflow-hidden bg-background"
+                  dangerouslySetInnerHTML={{ __html: currentCertificate.certificateHtml }}
                 />
-                <div className="text-sm">
-                  <p className="font-medium">Scan to verify</p>
-                  <p className="text-muted-foreground text-xs">
-                    Code: {currentCertificate.verificationCode.slice(0, 8)}...
-                  </p>
+
+                {/* QR Code */}
+                <div className="flex items-center justify-center gap-4 p-4 bg-muted/30 rounded-lg">
+                  <img
+                    src={currentCertificate.qrDataUrl}
+                    alt="Verification QR code for certificate"
+                    className="w-24 h-24 rounded-lg"
+                    loading="lazy"
+                  />
+                  <div className="text-sm">
+                    <p className="font-medium">Scan to verify</p>
+                    <p className="text-muted-foreground text-xs">
+                      Code: {currentCertificate.verificationCode.slice(0, 8)}...
+                    </p>
+                  </div>
                 </div>
               </div>
-              
-              {/* Actions */}
-              <div className="flex gap-3 justify-end">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowCertDialog(false)}
-                >
+            )}
+          </div>
+
+          {/* Sticky footer actions */}
+          {currentCertificate && (
+            <div className="sticky bottom-0 z-20 bg-background/95 backdrop-blur border-t px-6 py-4">
+              <div className="flex flex-col sm:flex-row gap-3 justify-end">
+                <Button variant="outline" onClick={() => setShowCertDialog(false)}>
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
                 </Button>
@@ -350,10 +367,7 @@ export default function CertificateProgress() {
                   <Download className="h-4 w-4 mr-2" />
                   Download Certificate
                 </Button>
-                <Button 
-                  variant="secondary"
-                  onClick={() => window.open(currentCertificate.verifyUrl, '_blank')}
-                >
+                <Button variant="secondary" onClick={() => window.open(currentCertificate.verifyUrl, '_blank')}>
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Open Verification
                 </Button>
