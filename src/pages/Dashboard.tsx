@@ -16,6 +16,8 @@ import LeaderboardWidget from '@/components/LeaderboardWidget';
 import MapCompare from '@/components/MapCompare';
 import EmissionsChart from '@/components/EmissionsChart';
 import CarbonInsights from '@/components/CarbonInsights';
+import WellnessWidget from '@/components/WellnessWidget';
+import CertificateProgress from '@/components/CertificateProgress';
 
 interface UserProfile {
   display_name: string;
@@ -277,6 +279,26 @@ export default function Dashboard() {
             className="mb-8"
           >
             {user?.id && <CarbonInsights userId={user.id} />}
+          </motion.div>
+
+          {/* Wellness Widget - Auto AQI, Health Tips, Diet Suggestions */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="mb-8"
+          >
+            <WellnessWidget />
+          </motion.div>
+
+          {/* Certificate Progress - Shows criteria and progress */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.05 }}
+            className="mb-8"
+          >
+            <CertificateProgress />
           </motion.div>
 
           {/* Detailed Analytics Cards */}

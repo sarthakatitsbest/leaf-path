@@ -35,3 +35,9 @@ verify_jwt = true
 
 [functions.carbon-compare]
 verify_jwt = true
+
+[functions.add-entry]
+verify_jwt = true
+
+[functions.compute-wellness]
+verify_jwt = true
