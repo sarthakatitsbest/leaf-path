@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      auto_estimates: {
+        Row: {
+          carbon_estimate: number | null
+          city: string | null
+          city_average_carbon: number | null
+          comparison_percentage: number | null
+          created_at: string | null
+          estimate_data: Json | null
+          estimate_date: string
+          id: string
+          user_id: string
+          water_estimate: number | null
+        }
+        Insert: {
+          carbon_estimate?: number | null
+          city?: string | null
+          city_average_carbon?: number | null
+          comparison_percentage?: number | null
+          created_at?: string | null
+          estimate_data?: Json | null
+          estimate_date: string
+          id?: string
+          user_id: string
+          water_estimate?: number | null
+        }
+        Update: {
+          carbon_estimate?: number | null
+          city?: string | null
+          city_average_carbon?: number | null
+          comparison_percentage?: number | null
+          created_at?: string | null
+          estimate_data?: Json | null
+          estimate_date?: string
+          id?: string
+          user_id?: string
+          water_estimate?: number | null
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           certificate_url: string | null
@@ -103,10 +142,50 @@ export type Database = {
         }
         Relationships: []
       }
+      certificate_progress: {
+        Row: {
+          certificate_type: string
+          created_at: string | null
+          current_value: number | null
+          id: string
+          is_unlocked: boolean | null
+          target_value: number
+          unlocked_at: string | null
+          updated_at: string | null
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          certificate_type: string
+          created_at?: string | null
+          current_value?: number | null
+          id?: string
+          is_unlocked?: boolean | null
+          target_value: number
+          unlocked_at?: string | null
+          updated_at?: string | null
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          certificate_type?: string
+          created_at?: string | null
+          current_value?: number | null
+          id?: string
+          is_unlocked?: boolean | null
+          target_value?: number
+          unlocked_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+          week_start?: string
+        }
+        Relationships: []
+      }
       certificates: {
         Row: {
           award_title: string | null
           badge_id: string | null
+          certificate_type: string | null
           created_at: string | null
           id: string
           issued_at: string | null
@@ -121,6 +200,7 @@ export type Database = {
         Insert: {
           award_title?: string | null
           badge_id?: string | null
+          certificate_type?: string | null
           created_at?: string | null
           id?: string
           issued_at?: string | null
@@ -135,6 +215,7 @@ export type Database = {
         Update: {
           award_title?: string | null
           badge_id?: string | null
+          certificate_type?: string | null
           created_at?: string | null
           id?: string
           issued_at?: string | null
@@ -219,6 +300,75 @@ export type Database = {
           id?: string
           lat?: number
           lon?: number
+        }
+        Relationships: []
+      }
+      entries: {
+        Row: {
+          created_at: string | null
+          data: Json
+          explanation: Json | null
+          footprint: Json
+          id: string
+          location: Json | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data: Json
+          explanation?: Json | null
+          footprint: Json
+          id?: string
+          location?: Json | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data?: Json
+          explanation?: Json | null
+          footprint?: Json
+          id?: string
+          location?: Json | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      health_tips: {
+        Row: {
+          activity_suggestions: Json | null
+          aqi_value: number | null
+          created_at: string | null
+          diet_suggestions: Json | null
+          id: string
+          temperature: number | null
+          tip_date: string
+          tips: Json
+          user_id: string
+        }
+        Insert: {
+          activity_suggestions?: Json | null
+          aqi_value?: number | null
+          created_at?: string | null
+          diet_suggestions?: Json | null
+          id?: string
+          temperature?: number | null
+          tip_date: string
+          tips: Json
+          user_id: string
+        }
+        Update: {
+          activity_suggestions?: Json | null
+          aqi_value?: number | null
+          created_at?: string | null
+          diet_suggestions?: Json | null
+          id?: string
+          temperature?: number | null
+          tip_date?: string
+          tips?: Json
+          user_id?: string
         }
         Relationships: []
       }
@@ -396,6 +546,45 @@ export type Database = {
           user_id?: string
           week_end?: string
           week_start?: string
+        }
+        Relationships: []
+      }
+      wellness_scores: {
+        Row: {
+          activity_score: number | null
+          aqi_score: number | null
+          breakdown: Json | null
+          created_at: string | null
+          diet_score: number | null
+          id: string
+          overall_score: number | null
+          score_date: string
+          user_id: string
+          water_score: number | null
+        }
+        Insert: {
+          activity_score?: number | null
+          aqi_score?: number | null
+          breakdown?: Json | null
+          created_at?: string | null
+          diet_score?: number | null
+          id?: string
+          overall_score?: number | null
+          score_date: string
+          user_id: string
+          water_score?: number | null
+        }
+        Update: {
+          activity_score?: number | null
+          aqi_score?: number | null
+          breakdown?: Json | null
+          created_at?: string | null
+          diet_score?: number | null
+          id?: string
+          overall_score?: number | null
+          score_date?: string
+          user_id?: string
+          water_score?: number | null
         }
         Relationships: []
       }
