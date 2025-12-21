@@ -1,5 +1,11 @@
 project_id = "fbmphwihmfzbbyavgusl"
 
+[functions.generate-certificate]
+verify_jwt = false
+
+[functions.verify-badge]
+verify_jwt = false
+
 [functions.send-verification-email]
 verify_jwt = false
 

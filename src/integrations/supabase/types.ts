@@ -103,6 +103,59 @@ export type Database = {
         }
         Relationships: []
       }
+      certificates: {
+        Row: {
+          award_title: string | null
+          badge_id: string | null
+          created_at: string | null
+          id: string
+          issued_at: string | null
+          pdf_url: string | null
+          project_name: string | null
+          qr_data_url: string | null
+          user_id: string
+          user_name: string | null
+          valid: boolean | null
+          verification_code: string
+        }
+        Insert: {
+          award_title?: string | null
+          badge_id?: string | null
+          created_at?: string | null
+          id?: string
+          issued_at?: string | null
+          pdf_url?: string | null
+          project_name?: string | null
+          qr_data_url?: string | null
+          user_id: string
+          user_name?: string | null
+          valid?: boolean | null
+          verification_code: string
+        }
+        Update: {
+          award_title?: string | null
+          badge_id?: string | null
+          created_at?: string | null
+          id?: string
+          issued_at?: string | null
+          pdf_url?: string | null
+          project_name?: string | null
+          qr_data_url?: string | null
+          user_id?: string
+          user_name?: string | null
+          valid?: boolean | null
+          verification_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenges: {
         Row: {
           active: boolean | null
