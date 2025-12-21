@@ -34,8 +34,8 @@ interface NearbySuggestion {
 }
 
 const CACHE_TTL_MS = 1000 * 60 * 5; // 5 minutes
-// Note: In production, this should be fetched from environment or edge function
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyD_i-QqqBVmLeqSALkPk4x75_tJCKns3rM';
+// Google Maps API Key
+const API_KEY = 'AIzaSyD_i-QqqBVmLeqSALkPk4x75_tJCKns3rM';
 
 export default function MapPOI() {
   const mapRef = useRef<HTMLDivElement>(null);
