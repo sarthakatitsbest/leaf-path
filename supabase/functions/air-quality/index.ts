@@ -18,9 +18,19 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const lat = parseFloat(url.searchParams.get("lat") || "");
-    const lon = parseFloat(url.searchParams.get("lon") || "");
+    let lat: number;
+    let lon: number;
+
+    // Support both query params (GET) and body (POST)
+    if (req.method === "POST") {
+      const body = await req.json();
+      lat = parseFloat(body.lat);
+      lon = parseFloat(body.lon);
+    } else {
+      const url = new URL(req.url);
+      lat = parseFloat(url.searchParams.get("lat") || "");
+      lon = parseFloat(url.searchParams.get("lon") || "");
+    }
 
     if (isNaN(lat) || isNaN(lon)) {
       return new Response(
