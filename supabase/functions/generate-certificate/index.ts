@@ -1,5 +1,4 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2';
-import QRCode from 'https://esm.sh/qrcode@1.5.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -44,16 +43,34 @@ Deno.serve(async (req) => {
     // Check if certificate already exists for this badge
     const { data: existingCert } = await supabase
       .from('certificates')
-      .select('id, verification_code, pdf_url')
+      .select('id, verification_code, pdf_url, qr_data_url')
       .eq('badge_id', badgeId)
       .maybeSingle();
 
     if (existingCert) {
+      // Generate verify URL for existing cert
+      const baseUrl = 'https://leaf-path.lovable.app';
+      const verifyUrl = `${baseUrl}/verify?code=${existingCert.verification_code}`;
+      
       return new Response(
         JSON.stringify({
           success: true,
           message: 'Certificate already exists',
-          certificate: existingCert
+          certificate: {
+            ...existingCert,
+            verifyUrl,
+            certificateHtml: generateCertificateHtml({
+              userName: userName || 'Eco Champion',
+              awardTitle: awardTitle || badge.title,
+              projectName: projectName || 'Eco Pulse AI',
+              issuedAt: new Date().toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              }),
+              verificationCode: existingCert.verification_code
+            })
+          }
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -63,18 +80,11 @@ Deno.serve(async (req) => {
     const verificationCode = crypto.randomUUID();
     
     // Build verification URL
-    const baseUrl = Deno.env.get('SUPABASE_URL')?.replace('.supabase.co', '.lovable.app') || 'https://ecotracker.lovable.app';
+    const baseUrl = 'https://leaf-path.lovable.app';
     const verifyUrl = `${baseUrl}/verify?code=${verificationCode}`;
 
-    // Generate QR code as data URL
-    const qrDataUrl = await QRCode.toDataURL(verifyUrl, { 
-      margin: 2, 
-      width: 200,
-      color: {
-        dark: '#0b243b',
-        light: '#ffffff'
-      }
-    });
+    // Use QuickChart API for QR code generation (works in Deno)
+    const qrDataUrl = `https://quickchart.io/qr?text=${encodeURIComponent(verifyUrl)}&size=200&margin=2`;
 
     // Create certificate HTML for PDF-like display
     const certificateHtml = generateCertificateHtml({
@@ -87,7 +97,7 @@ Deno.serve(async (req) => {
         day: 'numeric'
       }),
       verificationCode,
-      qrDataUrl
+      qrUrl: qrDataUrl
     });
 
     // Store certificate record
@@ -128,7 +138,7 @@ Deno.serve(async (req) => {
         certificate: {
           id: certificate.id,
           verificationCode: certificate.verification_code,
-          qrDataUrl: certificate.qr_data_url,
+          qrDataUrl: qrDataUrl,
           verifyUrl,
           certificateHtml
         }
@@ -150,7 +160,7 @@ function generateCertificateHtml(data: {
   projectName: string;
   issuedAt: string;
   verificationCode: string;
-  qrDataUrl: string;
+  qrUrl?: string;
 }): string {
   return `
 <!DOCTYPE html>
@@ -316,7 +326,7 @@ function generateCertificateHtml(data: {
       
       <div class="footer">
         <div class="qr-section">
-          <img src="${data.qrDataUrl}" alt="Verification QR">
+          ${data.qrUrl ? `<img src="${data.qrUrl}" alt="Verification QR">` : ''}
           <div class="qr-label">Scan to verify<br>Code: ${data.verificationCode.slice(0, 8)}...</div>
         </div>
         

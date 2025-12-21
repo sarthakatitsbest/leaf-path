@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +19,9 @@ import {
   Download,
   Lock,
   CheckCircle2,
-  ExternalLink
+  ExternalLink,
+  X,
+  ArrowLeft
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -31,6 +34,14 @@ interface CertificateProgressItem {
   unit: string;
   progress: number;
   isUnlocked: boolean;
+}
+
+interface CertificateData {
+  id: string;
+  verificationCode: string;
+  qrDataUrl: string;
+  verifyUrl: string;
+  certificateHtml: string;
 }
 
 const CERTIFICATE_ICONS: Record<string, typeof Leaf> = {
@@ -58,6 +69,8 @@ export default function CertificateProgress() {
   const [loading, setLoading] = useState(true);
   const [certificates, setCertificates] = useState<CertificateProgressItem[]>([]);
   const [generatingCert, setGeneratingCert] = useState<string | null>(null);
+  const [showCertDialog, setShowCertDialog] = useState(false);
+  const [currentCertificate, setCurrentCertificate] = useState<CertificateData | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -126,9 +139,10 @@ export default function CertificateProgress() {
       if (response.data?.success) {
         toast.success('Certificate generated successfully!');
         
-        // Open certificate in new tab if available
-        if (response.data.certificate?.verifyUrl) {
-          window.open(response.data.certificate.verifyUrl, '_blank');
+        // Show certificate in dialog
+        if (response.data.certificate) {
+          setCurrentCertificate(response.data.certificate);
+          setShowCertDialog(true);
         }
       } else {
         throw new Error(response.data?.error || 'Failed to generate certificate');
@@ -139,6 +153,20 @@ export default function CertificateProgress() {
     } finally {
       setGeneratingCert(null);
     }
+  };
+
+  const handleDownloadCertificate = () => {
+    if (!currentCertificate?.certificateHtml) return;
+    
+    // Create a blob from the HTML and download
+    const blob = new Blob([currentCertificate.certificateHtml], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `certificate-${currentCertificate.verificationCode.slice(0, 8)}.html`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('Certificate downloaded!');
   };
 
   if (loading) {
@@ -275,6 +303,65 @@ export default function CertificateProgress() {
       <p className="text-xs text-muted-foreground text-center mt-4">
         💡 Certificates are auto-generated when you meet the criteria. All data is transparent and explainable.
       </p>
+
+      {/* Certificate Preview Dialog */}
+      <Dialog open={showCertDialog} onOpenChange={setShowCertDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+          <DialogHeader className="flex flex-row items-center justify-between">
+            <DialogTitle className="flex items-center gap-2">
+              <Award className="h-5 w-5 text-yellow-500" />
+              Your Certificate
+            </DialogTitle>
+          </DialogHeader>
+          
+          {currentCertificate && (
+            <div className="space-y-4">
+              {/* Certificate Preview */}
+              <div 
+                className="border rounded-lg overflow-hidden"
+                dangerouslySetInnerHTML={{ __html: currentCertificate.certificateHtml }}
+              />
+              
+              {/* QR Code */}
+              <div className="flex items-center justify-center gap-4 p-4 bg-muted/30 rounded-lg">
+                <img 
+                  src={currentCertificate.qrDataUrl} 
+                  alt="Verification QR Code"
+                  className="w-24 h-24 rounded-lg"
+                />
+                <div className="text-sm">
+                  <p className="font-medium">Scan to verify</p>
+                  <p className="text-muted-foreground text-xs">
+                    Code: {currentCertificate.verificationCode.slice(0, 8)}...
+                  </p>
+                </div>
+              </div>
+              
+              {/* Actions */}
+              <div className="flex gap-3 justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowCertDialog(false)}
+                >
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back
+                </Button>
+                <Button onClick={handleDownloadCertificate}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Download Certificate
+                </Button>
+                <Button 
+                  variant="secondary"
+                  onClick={() => window.open(currentCertificate.verifyUrl, '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  Open Verification
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

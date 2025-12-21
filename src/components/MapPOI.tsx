@@ -97,7 +97,7 @@ export default function MapPOI() {
     setNearbySuggestions(prev => [...prev.slice(0, 3), ...suggestions].slice(0, 5));
   }, [userLocation]);
 
-  // Load Google Maps script
+  // Load Google Maps script and auto-detect location
   useEffect(() => {
     if (window.google) {
       initMap();
@@ -118,6 +118,137 @@ export default function MapPOI() {
       delete window.initMapPOI;
     };
   }, []);
+
+  // Auto-detect location on mount
+  useEffect(() => {
+    if (map && placesService && infoWindow && !userLocation) {
+      // Try to get user location automatically
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            setUserLocation(loc);
+            map.setCenter(loc);
+            map.setZoom(14);
+            
+            // Reverse geocode to get city name
+            if (window.google) {
+              const geocoder = new window.google.maps.Geocoder();
+              geocoder.geocode({ location: loc }, (results: any[], status: string) => {
+                if (status === 'OK' && results[0]) {
+                  const cityComponent = results[0].address_components?.find(
+                    (c: any) => c.types.includes('locality') || c.types.includes('administrative_area_level_2')
+                  );
+                  if (cityComponent) {
+                    setCityName(cityComponent.long_name);
+                  }
+                }
+              });
+            }
+            
+            // Search for nearby places
+            performSearches(new window.google.maps.LatLng(loc.lat, loc.lng), placesService, infoWindow);
+            
+            // Generate context-aware suggestions
+            generateContextSuggestions(loc, placesService);
+          },
+          () => {
+            console.log('Location permission denied - using default location');
+            // Use default location
+            performSearches(map.getCenter(), placesService, infoWindow);
+          },
+          { enableHighAccuracy: false, timeout: 10000 }
+        );
+      }
+    }
+  }, [map, placesService, infoWindow]);
+
+  // Generate context-aware suggestions based on nearby places
+  const generateContextSuggestions = (location: { lat: number; lng: number }, service: any) => {
+    const suggestions: NearbySuggestion[] = [];
+    
+    // Search for bus stations
+    service.nearbySearch(
+      { location, radius: 500, type: 'bus_station' },
+      (results: any[], status: string) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && results?.length) {
+          results.slice(0, 2).forEach(place => {
+            if (!place.geometry?.location) return;
+            const distance = Math.round(
+              window.google.maps.geometry.spherical.computeDistanceBetween(
+                new window.google.maps.LatLng(location.lat, location.lng),
+                place.geometry.location
+              )
+            );
+            suggestions.push({
+              name: place.name || 'Bus Stop',
+              type: 'bus_station',
+              distance,
+              suggestion: `A bus stop is ${distance}m away — switching to public transport saves ~1.8 kg CO₂/day.`,
+              co2Savings: '1.8 kg CO₂/day'
+            });
+          });
+          setNearbySuggestions(prev => [...prev.filter(s => s.type !== 'bus_station'), ...suggestions.filter(s => s.type === 'bus_station')].slice(0, 5));
+        }
+      }
+    );
+
+    // Search for parks
+    service.nearbySearch(
+      { location, radius: 500, type: 'park' },
+      (results: any[], status: string) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && results?.length) {
+          results.slice(0, 1).forEach(place => {
+            if (!place.geometry?.location) return;
+            const distance = Math.round(
+              window.google.maps.geometry.spherical.computeDistanceBetween(
+                new window.google.maps.LatLng(location.lat, location.lng),
+                place.geometry.location
+              )
+            );
+            setNearbySuggestions(prev => {
+              const newSugg: NearbySuggestion = {
+                name: place.name || 'Park',
+                type: 'park',
+                distance,
+                suggestion: `A park is nearby (${distance}m) — walking here supports heart health and zero emissions.`,
+                co2Savings: 'Zero emissions'
+              };
+              return [...prev.filter(s => s.type !== 'park'), newSugg].slice(0, 5);
+            });
+          });
+        }
+      }
+    );
+
+    // Search for grocery stores/markets
+    service.nearbySearch(
+      { location, radius: 500, type: 'grocery_or_supermarket' },
+      (results: any[], status: string) => {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK && results?.length) {
+          results.slice(0, 1).forEach(place => {
+            if (!place.geometry?.location) return;
+            const distance = Math.round(
+              window.google.maps.geometry.spherical.computeDistanceBetween(
+                new window.google.maps.LatLng(location.lat, location.lng),
+                place.geometry.location
+              )
+            );
+            setNearbySuggestions(prev => {
+              const newSugg: NearbySuggestion = {
+                name: place.name || 'Local Market',
+                type: 'grocery_store',
+                distance,
+                suggestion: `Local market ${distance}m away — choosing unpackaged food reduces plastic waste.`,
+                co2Savings: 'Reduces plastic waste'
+              };
+              return [...prev.filter(s => s.type !== 'grocery_store'), newSugg].slice(0, 5);
+            });
+          });
+        }
+      }
+    );
+  };
 
   const initMap = () => {
     if (!mapRef.current || !window.google) return;
