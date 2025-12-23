@@ -108,6 +108,17 @@ export default function Dashboard() {
   const avgDailyEmissions = carbonLogs.length > 0 ? totalEmissions / carbonLogs.length : 0;
 
   return (
+    <ErrorBoundary name="Dashboard" fallback={
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center p-8">
+            <h2 className="text-xl font-semibold text-destructive mb-2">Something went wrong</h2>
+            <p className="text-muted-foreground">Please refresh the page to try again.</p>
+          </div>
+        </div>
+      </div>
+    }>
     <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/20 to-teal-50/20">
       <Navbar />
       
@@ -508,5 +519,6 @@ export default function Dashboard() {
       {/* Enhanced AI Chat Widget */}
       <AiChatWidget userProfile={profile} recentData={carbonLogs.slice(0, 3)} />
     </div>
+    </ErrorBoundary>
   );
 }
