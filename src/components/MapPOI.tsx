@@ -365,7 +365,11 @@ export default function MapPOI() {
     infoWin: any,
     markersArray: any[]
   ) => {
-    const cacheKey = `places:${categoryKey}:${location.lat().toFixed(4)}:${location.lng().toFixed(4)}`;
+    // Normalize lat/lng to handle both LatLng objects and plain {lat, lng} objects
+    const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
+    const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+    
+    const cacheKey = `places:${categoryKey}:${lat.toFixed(4)}:${lng.toFixed(4)}`;
     const cached = loadCache(cacheKey);
 
     if (cached) {
@@ -376,8 +380,13 @@ export default function MapPOI() {
     setApiCallCount((prev) => prev + 1);
     setLoading(true);
 
+    // Ensure we pass a proper LatLng object to the API
+    const searchLocation = typeof location.lat === 'function' 
+      ? location 
+      : new window.google.maps.LatLng(lat, lng);
+
     const request = {
-      location,
+      location: searchLocation,
       radius: 5000,
       query: queryText,
     };
