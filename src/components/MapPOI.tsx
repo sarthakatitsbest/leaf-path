@@ -365,9 +365,21 @@ export default function MapPOI() {
     infoWin: any,
     markersArray: any[]
   ) => {
+    // Guard: ensure Google Maps is loaded
+    if (!window.google?.maps) {
+      console.warn('Google Maps not ready yet');
+      return;
+    }
+
     // Normalize lat/lng to handle both LatLng objects and plain {lat, lng} objects
-    const lat = typeof location.lat === 'function' ? location.lat() : location.lat;
-    const lng = typeof location.lng === 'function' ? location.lng() : location.lng;
+    const lat = typeof location?.lat === 'function' ? location.lat() : (location?.lat ?? 0);
+    const lng = typeof location?.lng === 'function' ? location.lng() : (location?.lng ?? 0);
+    
+    // Guard against invalid coordinates
+    if (!lat || !lng) {
+      console.warn('Invalid location coordinates');
+      return;
+    }
     
     const cacheKey = `places:${categoryKey}:${lat.toFixed(4)}:${lng.toFixed(4)}`;
     const cached = loadCache(cacheKey);
@@ -381,7 +393,7 @@ export default function MapPOI() {
     setLoading(true);
 
     // Ensure we pass a proper LatLng object to the API
-    const searchLocation = typeof location.lat === 'function' 
+    const searchLocation = typeof location?.lat === 'function' 
       ? location 
       : new window.google.maps.LatLng(lat, lng);
 
