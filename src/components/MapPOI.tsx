@@ -282,9 +282,31 @@ export default function MapPOI() {
     setMarkers([]);
   };
 
+  // Sanitize place results to avoid deprecated properties that throw errors
+  const sanitizePlaceResults = (results: any[]) => {
+    return results.map((place) => ({
+      place_id: place.place_id,
+      name: place.name,
+      geometry: place.geometry ? {
+        location: {
+          lat: typeof place.geometry.location.lat === 'function' 
+            ? place.geometry.location.lat() 
+            : place.geometry.location.lat,
+          lng: typeof place.geometry.location.lng === 'function' 
+            ? place.geometry.location.lng() 
+            : place.geometry.location.lng,
+        }
+      } : null,
+      formatted_address: place.formatted_address,
+      vicinity: place.vicinity,
+    }));
+  };
+
   const saveCache = (key: string, value: any) => {
     try {
-      const payload = { ts: Date.now(), data: value };
+      // Sanitize to avoid deprecated getters like open_now
+      const sanitized = sanitizePlaceResults(value);
+      const payload = { ts: Date.now(), data: sanitized };
       localStorage.setItem(key, JSON.stringify(payload));
     } catch (e) {
       console.warn('Cache save failed', e);
@@ -369,10 +391,15 @@ export default function MapPOI() {
       if (!place.geometry?.location) return;
 
       const iconUrl = `https://maps.gstatic.com/mapfiles/ms2/micons/${iconColor}.png`;
+      
+      // Handle both cached (plain object) and fresh (LatLng) location formats
+      const position = typeof place.geometry.location.lat === 'function'
+        ? place.geometry.location
+        : new window.google.maps.LatLng(place.geometry.location.lat, place.geometry.location.lng);
 
       const marker = new window.google.maps.Marker({
         map,
-        position: place.geometry.location,
+        position,
         title: place.name,
         icon: { url: iconUrl },
       });
