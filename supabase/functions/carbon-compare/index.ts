@@ -25,14 +25,31 @@ serve(async (req) => {
   }
 
   try {
-    const url = new URL(req.url);
-    const userId = url.searchParams.get("user_id");
-    const lat = parseFloat(url.searchParams.get("lat") || "");
-    const lon = parseFloat(url.searchParams.get("lon") || "");
-    const radiusKm = parseFloat(url.searchParams.get("radius_km") || "10");
-    const days = parseInt(url.searchParams.get("days") || "7");
+    // Support both POST body and query params
+    let userId: string | null = null;
+    let lat: number = NaN;
+    let lon: number = NaN;
+    let radiusKm: number = 10;
+    let days: number = 7;
+
+    if (req.method === "POST") {
+      const body = await req.json();
+      userId = body.user_id;
+      lat = parseFloat(body.lat);
+      lon = parseFloat(body.lon);
+      radiusKm = parseFloat(body.radius_km) || 10;
+      days = parseInt(body.days) || 7;
+    } else {
+      const url = new URL(req.url);
+      userId = url.searchParams.get("user_id");
+      lat = parseFloat(url.searchParams.get("lat") || "");
+      lon = parseFloat(url.searchParams.get("lon") || "");
+      radiusKm = parseFloat(url.searchParams.get("radius_km") || "10");
+      days = parseInt(url.searchParams.get("days") || "7");
+    }
 
     if (!userId || isNaN(lat) || isNaN(lon)) {
+      console.log("Invalid params:", { userId, lat, lon });
       return new Response(
         JSON.stringify({ error: "Missing or invalid parameters" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
