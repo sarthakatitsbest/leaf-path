@@ -18,6 +18,7 @@ import EmissionsChart from '@/components/EmissionsChart';
 import CarbonInsights from '@/components/CarbonInsights';
 import WellnessWidget from '@/components/WellnessWidget';
 import CertificateProgress from '@/components/CertificateProgress';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 interface UserProfile {
   display_name: string;
@@ -496,9 +497,9 @@ export default function Dashboard() {
                   Find recycling centers, EV charging stations, and public transport nearby
                 </CardDescription>
               </CardHeader>
-              <CardContent className="relative z-10">
-                <MapPOI />
-              </CardContent>
+                <ErrorBoundary name="Nearby Eco-Friendly Locations">
+                  <MapPOI />
+                </ErrorBoundary>
             </Card>
           </motion.div>
         </div>
