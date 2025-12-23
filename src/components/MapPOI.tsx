@@ -99,6 +99,17 @@ export default function MapPOI() {
 
   // Load Google Maps script and auto-detect location
   useEffect(() => {
+    // Clear any stale cache that might have bad data
+    try {
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('places:')) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      // Ignore cache clearing errors
+    }
+
     if (window.google) {
       initMap();
       return;
