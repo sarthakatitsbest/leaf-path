@@ -108,17 +108,6 @@ export default function Dashboard() {
   const avgDailyEmissions = carbonLogs.length > 0 ? totalEmissions / carbonLogs.length : 0;
 
   return (
-    <ErrorBoundary name="Dashboard" fallback={
-      <div className="min-h-screen bg-background flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center p-8">
-            <h2 className="text-xl font-semibold text-destructive mb-2">Something went wrong</h2>
-            <p className="text-muted-foreground">Please refresh the page to try again.</p>
-          </div>
-        </div>
-      </div>
-    }>
     <div className="min-h-screen bg-gradient-to-br from-background via-purple-50/20 to-teal-50/20">
       <Navbar />
       
@@ -278,24 +267,26 @@ export default function Dashboard() {
                   <CardDescription className="font-inter">Compare your emissions with your city</CardDescription>
                 </CardHeader>
                 <CardContent className="relative z-10">
-                  {(() => {
-                    const logLat = carbonLogs[0]?.lat;
-                    const logLon = carbonLogs[0]?.lon;
-                    const lat = logLat ?? geoCoords?.lat;
-                    const lon = logLon ?? geoCoords?.lon;
+                  <ErrorBoundary name="Location & Air Quality">
+                    {(() => {
+                      const logLat = carbonLogs[0]?.lat;
+                      const logLon = carbonLogs[0]?.lon;
+                      const lat = logLat ?? geoCoords?.lat;
+                      const lon = logLon ?? geoCoords?.lon;
 
-                    if (lat && lon && user?.id) {
-                      return <MapCompare lat={lat} lon={lon} userId={user.id} radiusKm={10} />;
-                    }
+                      if (lat && lon && user?.id) {
+                        return <MapCompare lat={lat} lon={lon} userId={user.id} radiusKm={10} />;
+                      }
 
-                    return (
-                      <div className="h-[400px] flex items-center justify-center text-muted-foreground">
-                        <p className="text-center">
-                          Please allow location access to see your map and air quality.
-                        </p>
-                      </div>
-                    );
-                  })()}
+                      return (
+                        <div className="h-[400px] flex items-center justify-center text-muted-foreground">
+                          <p className="text-center">
+                            Please allow location access to see your map and air quality.
+                          </p>
+                        </div>
+                      );
+                    })()}
+                  </ErrorBoundary>
                 </CardContent>
               </Card>
             </motion.div>
@@ -508,9 +499,11 @@ export default function Dashboard() {
                   Find recycling centers, EV charging stations, and public transport nearby
                 </CardDescription>
               </CardHeader>
+              <CardContent className="relative z-10">
                 <ErrorBoundary name="Nearby Eco-Friendly Locations">
                   <MapPOI />
                 </ErrorBoundary>
+              </CardContent>
             </Card>
           </motion.div>
         </div>
@@ -519,6 +512,5 @@ export default function Dashboard() {
       {/* Enhanced AI Chat Widget */}
       <AiChatWidget userProfile={profile} recentData={carbonLogs.slice(0, 3)} />
     </div>
-    </ErrorBoundary>
   );
 }

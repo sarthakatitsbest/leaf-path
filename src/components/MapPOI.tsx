@@ -289,7 +289,9 @@ export default function MapPOI() {
   };
 
   const clearMarkers = () => {
-    markers.forEach((m) => m.setMap(null));
+    markers.forEach((m) => {
+      if (m && typeof m.setMap === 'function') m.setMap(null);
+    });
     setMarkers([]);
   };
 
@@ -368,6 +370,12 @@ export default function MapPOI() {
     // Guard: ensure Google Maps is loaded
     if (!window.google?.maps) {
       console.warn('Google Maps not ready yet');
+      return;
+    }
+
+    // Guard: ensure Places service is valid
+    if (!service || typeof service.textSearch !== 'function') {
+      console.warn('Places service not ready yet');
       return;
     }
 
