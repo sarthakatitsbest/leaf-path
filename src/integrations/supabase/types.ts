@@ -100,6 +100,218 @@ export type Database = {
           },
         ]
       }
+      campaign_certificates: {
+        Row: {
+          campaign_id: string
+          id: string
+          issued_at: string | null
+          issued_by: string
+          metadata: Json | null
+          pdf_url: string | null
+          user_id: string
+          verification_code: string
+        }
+        Insert: {
+          campaign_id: string
+          id?: string
+          issued_at?: string | null
+          issued_by: string
+          metadata?: Json | null
+          pdf_url?: string | null
+          user_id: string
+          verification_code?: string
+        }
+        Update: {
+          campaign_id?: string
+          id?: string
+          issued_at?: string | null
+          issued_by?: string
+          metadata?: Json | null
+          pdf_url?: string | null
+          user_id?: string
+          verification_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_certificates_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_notifications: {
+        Row: {
+          campaign_id: string
+          id: string
+          notification_type: string | null
+          payload: Json | null
+          sent_at: string | null
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          id?: string
+          notification_type?: string | null
+          payload?: Json | null
+          sent_at?: string | null
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          id?: string
+          notification_type?: string | null
+          payload?: Json | null
+          sent_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_notifications_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_participants: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          campaign_id: string
+          checked_in_at: string | null
+          checked_in_lat: number | null
+          checked_in_lng: number | null
+          completed_at: string | null
+          id: string
+          requested_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          campaign_id: string
+          checked_in_at?: string | null
+          checked_in_lat?: number | null
+          checked_in_lng?: number | null
+          completed_at?: string | null
+          id?: string
+          requested_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          campaign_id?: string
+          checked_in_at?: string | null
+          checked_in_lat?: number | null
+          checked_in_lng?: number | null
+          completed_at?: string | null
+          id?: string
+          requested_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_participants_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_team: {
+        Row: {
+          added_at: string | null
+          campaign_id: string
+          id: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          campaign_id: string
+          id?: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          added_at?: string | null
+          campaign_id?: string
+          id?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_team_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          capacity: number | null
+          certificate_template_id: string | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          end_time: string
+          id: string
+          image_url: string | null
+          lat: number
+          lng: number
+          owner_id: string
+          start_time: string
+          title: string
+          updated_at: string | null
+          visibility: string | null
+        }
+        Insert: {
+          capacity?: number | null
+          certificate_template_id?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_time: string
+          id?: string
+          image_url?: string | null
+          lat: number
+          lng: number
+          owner_id: string
+          start_time: string
+          title: string
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          capacity?: number | null
+          certificate_template_id?: string | null
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_time?: string
+          id?: string
+          image_url?: string | null
+          lat?: number
+          lng?: number
+          owner_id?: string
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Relationships: []
+      }
       carbon_logs: {
         Row: {
           created_at: string | null
@@ -649,6 +861,9 @@ export type Database = {
           display_name: string | null
           email: string
           id: string
+          lat: number | null
+          lng: number | null
+          notification_opt_in: boolean | null
           points: number | null
           total_points: number | null
           updated_at: string | null
@@ -662,6 +877,9 @@ export type Database = {
           display_name?: string | null
           email: string
           id?: string
+          lat?: number | null
+          lng?: number | null
+          notification_opt_in?: boolean | null
           points?: number | null
           total_points?: number | null
           updated_at?: string | null
@@ -675,6 +893,9 @@ export type Database = {
           display_name?: string | null
           email?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
+          notification_opt_in?: boolean | null
           points?: number | null
           total_points?: number | null
           updated_at?: string | null

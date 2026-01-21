@@ -50,3 +50,18 @@ verify_jwt = true
 
 [functions.plastic-hotspots]
 verify_jwt = false
+
+[functions.campaign-create]
+verify_jwt = true
+
+[functions.campaign-join]
+verify_jwt = true
+
+[functions.campaign-checkin]
+verify_jwt = true
+
+[functions.campaign-certificate]
+verify_jwt = true
+
+[functions.campaign-list]
+verify_jwt = false

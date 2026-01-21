@@ -22,6 +22,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import PlasticPitchAnalyzer from '@/components/PlasticPitchAnalyzer';
 import PlasticClassifier from '@/components/PlasticClassifier';
 import PlasticHotspotMap from '@/components/PlasticHotspotMap';
+import { CampaignList } from '@/components/campaigns/CampaignList';
 
 interface UserProfile {
   display_name: string;
@@ -498,6 +499,18 @@ export default function Dashboard() {
                 <BadgeGallery />
               </CardContent>
             </Card>
+          </motion.div>
+
+          {/* Go-Green Campaigns Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+            className="mt-8"
+          >
+            <ErrorBoundary name="Go-Green Campaigns">
+              <CampaignList />
+            </ErrorBoundary>
           </motion.div>
 
           {/* Eco-Friendly POI Map Section */}
