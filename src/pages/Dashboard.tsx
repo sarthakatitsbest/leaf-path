@@ -19,6 +19,9 @@ import CarbonInsights from '@/components/CarbonInsights';
 import WellnessWidget from '@/components/WellnessWidget';
 import CertificateProgress from '@/components/CertificateProgress';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import PlasticPitchAnalyzer from '@/components/PlasticPitchAnalyzer';
+import PlasticClassifier from '@/components/PlasticClassifier';
+import PlasticHotspotMap from '@/components/PlasticHotspotMap';
 
 interface UserProfile {
   display_name: string;
@@ -210,6 +213,19 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
               </motion.div>
+            </motion.div>
+          </div>
+
+          {/* Plastic Waste Intelligence Engine */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+              <PlasticPitchAnalyzer />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+              <PlasticClassifier />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+              <PlasticHotspotMap />
             </motion.div>
           </div>
 
