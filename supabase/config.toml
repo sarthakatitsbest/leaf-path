@@ -41,3 +41,12 @@ verify_jwt = true
 
 [functions.compute-wellness]
 verify_jwt = true
+
+[functions.plastic-analyze]
+verify_jwt = true
+
+[functions.plastic-classify]
+verify_jwt = true
+
+[functions.plastic-hotspots]
+verify_jwt = false

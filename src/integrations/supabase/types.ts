@@ -432,6 +432,182 @@ export type Database = {
         }
         Relationships: []
       }
+      plastic_brand_mentions: {
+        Row: {
+          area: string | null
+          brand_name: string
+          confidence: number | null
+          created_at: string
+          evidence: Json | null
+          id: string
+          mention_count: number | null
+        }
+        Insert: {
+          area?: string | null
+          brand_name: string
+          confidence?: number | null
+          created_at?: string
+          evidence?: Json | null
+          id?: string
+          mention_count?: number | null
+        }
+        Update: {
+          area?: string | null
+          brand_name?: string
+          confidence?: number | null
+          created_at?: string
+          evidence?: Json | null
+          id?: string
+          mention_count?: number | null
+        }
+        Relationships: []
+      }
+      plastic_classifications: {
+        Row: {
+          created_at: string
+          id: string
+          metadata: Json | null
+          model_confidence: number | null
+          plastic_category: string
+          recyclability_score: number | null
+          upload_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          model_confidence?: number | null
+          plastic_category: string
+          recyclability_score?: number | null
+          upload_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          model_confidence?: number | null
+          plastic_category?: string
+          recyclability_score?: number | null
+          upload_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plastic_classifications_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "plastic_uploads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plastic_hotspots: {
+        Row: {
+          area_name: string | null
+          city: string
+          computed_at: string
+          id: string
+          location_lat: number
+          location_lng: number
+          score: number | null
+          severity: string
+          sources: Json | null
+        }
+        Insert: {
+          area_name?: string | null
+          city: string
+          computed_at?: string
+          id?: string
+          location_lat: number
+          location_lng: number
+          score?: number | null
+          severity: string
+          sources?: Json | null
+        }
+        Update: {
+          area_name?: string | null
+          city?: string
+          computed_at?: string
+          id?: string
+          location_lat?: number
+          location_lng?: number
+          score?: number | null
+          severity?: string
+          sources?: Json | null
+        }
+        Relationships: []
+      }
+      plastic_pitch_analyses: {
+        Row: {
+          category: string | null
+          confidence: number | null
+          created_at: string
+          id: string
+          problem_statement: string | null
+          solution_statement: string | null
+          suggested_metrics: Json | null
+          transcript: string
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          problem_statement?: string | null
+          solution_statement?: string | null
+          suggested_metrics?: Json | null
+          transcript: string
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          problem_statement?: string | null
+          solution_statement?: string | null
+          suggested_metrics?: Json | null
+          transcript?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      plastic_uploads: {
+        Row: {
+          created_at: string
+          file_url: string | null
+          id: string
+          location_lat: number | null
+          location_lng: number | null
+          text_extracted: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          text_extracted?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_url?: string | null
+          id?: string
+          location_lat?: number | null
+          location_lng?: number | null
+          text_extracted?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       rewards: {
         Row: {
           description: string | null
