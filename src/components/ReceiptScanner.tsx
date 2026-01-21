@@ -29,6 +29,7 @@ const ReceiptScanner: React.FC = () => {
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [processingStep, setProcessingStep] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const processImageWithOCR = async (imageFile: File): Promise<string> => {
@@ -139,9 +140,8 @@ const ReceiptScanner: React.FC = () => {
   };
 
   const handleCameraCapture = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.setAttribute('capture', 'environment');
-      fileInputRef.current.click();
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
     }
   };
 
@@ -184,6 +184,17 @@ const ReceiptScanner: React.FC = () => {
               Upload Image
             </Button>
             
+            {/* Camera input - opens camera directly on mobile */}
+            <input
+              ref={cameraInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            
+            {/* File input - opens file picker/gallery */}
             <input
               ref={fileInputRef}
               type="file"
