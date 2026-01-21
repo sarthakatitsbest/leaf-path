@@ -9,6 +9,27 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Plus, MapPin, Loader2 } from 'lucide-react';
 
+// Helper to format date to datetime-local format (YYYY-MM-DDTHH:mm)
+const formatDatetimeLocal = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
+// Get default start time (1 hour from now) and end time (3 hours from now)
+const getDefaultTimes = () => {
+  const now = new Date();
+  const startTime = new Date(now.getTime() + 60 * 60 * 1000); // +1 hour
+  const endTime = new Date(now.getTime() + 3 * 60 * 60 * 1000); // +3 hours
+  return {
+    start: formatDatetimeLocal(startTime),
+    end: formatDatetimeLocal(endTime)
+  };
+};
+
 interface CreateCampaignDialogProps {
   onCampaignCreated?: () => void;
 }
@@ -19,14 +40,16 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({ onCa
   const [gettingLocation, setGettingLocation] = useState(false);
   const { toast } = useToast();
 
+  const defaultTimes = getDefaultTimes();
+
   const [form, setForm] = useState({
     title: '',
     description: '',
     city: '',
     lat: 0,
     lng: 0,
-    start_time: '',
-    end_time: '',
+    start_time: defaultTimes.start,
+    end_time: defaultTimes.end,
     capacity: 50,
     visibility: 'public',
     team_emails: ''
@@ -98,14 +121,15 @@ export const CreateCampaignDialog: React.FC<CreateCampaignDialogProps> = ({ onCa
 
       toast({ title: '🎉 Campaign created!', description: response.data.message });
       setOpen(false);
+      const newDefaultTimes = getDefaultTimes();
       setForm({
         title: '',
         description: '',
         city: '',
         lat: 0,
         lng: 0,
-        start_time: '',
-        end_time: '',
+        start_time: newDefaultTimes.start,
+        end_time: newDefaultTimes.end,
         capacity: 50,
         visibility: 'public',
         team_emails: ''
