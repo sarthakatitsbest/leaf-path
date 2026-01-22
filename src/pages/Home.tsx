@@ -2,9 +2,22 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navbar } from '@/components/Navbar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BarChart3, Users, Award, TrendingDown, Leaf, Zap } from 'lucide-react';
+import { 
+  BarChart3, 
+  Users, 
+  Award, 
+  TrendingDown, 
+  Leaf, 
+  Zap,
+  MapPin,
+  Bot,
+  Recycle,
+  Heart,
+  Trophy,
+  ArrowRight
+} from 'lucide-react';
 import Hero from '@/components/Hero';
 import ProblemSection from '@/components/ProblemSection';
 import SolutionSection from '@/components/SolutionSection';
@@ -14,8 +27,76 @@ import GamificationSection from '@/components/GamificationSection';
 import NewsletterSection from '@/components/NewsletterSection';
 import FAQSection from '@/components/FAQSection';
 
+const featureCards = [
+  {
+    path: '/carbon',
+    title: 'Carbon Tracker',
+    description: 'Log daily activities and track your emissions',
+    icon: TrendingDown,
+    gradient: 'gradient-teal-lime',
+    color: 'text-primary'
+  },
+  {
+    path: '/campaigns',
+    title: 'Go-Green Campaigns',
+    description: 'Join community environmental initiatives',
+    icon: Users,
+    gradient: 'gradient-purple-pink',
+    color: 'text-accent'
+  },
+  {
+    path: '/map',
+    title: 'Eco Map',
+    description: 'Find recycling centers, EV chargers & more',
+    icon: MapPin,
+    gradient: 'gradient-teal-lime',
+    color: 'text-secondary'
+  },
+  {
+    path: '/plastic',
+    title: 'Plastic AI',
+    description: 'Classify plastic & analyze sustainability pitches',
+    icon: Recycle,
+    gradient: 'gradient-warm',
+    color: 'text-green-600'
+  },
+  {
+    path: '/wellness',
+    title: 'Wellness & Badges',
+    description: 'Track wellness score & earn certificates',
+    icon: Heart,
+    gradient: 'gradient-purple-pink',
+    color: 'text-pink-500'
+  },
+  {
+    path: '/leaderboard',
+    title: 'Leaderboard',
+    description: 'Compete with eco-warriors globally',
+    icon: Trophy,
+    gradient: 'gradient-warm',
+    color: 'text-warning'
+  },
+  {
+    path: '/chat',
+    title: 'AI Assistant',
+    description: 'Get personalized eco-tips from AI',
+    icon: Bot,
+    gradient: 'gradient-purple-pink',
+    color: 'text-accent'
+  },
+  {
+    path: '/dashboard',
+    title: 'Full Dashboard',
+    description: 'Access all features in one place',
+    icon: BarChart3,
+    gradient: 'gradient-teal-lime',
+    color: 'text-primary'
+  }
+];
+
 export default function Home() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   if (!user) {
     return (
@@ -42,7 +123,7 @@ export default function Home() {
         transition={{ duration: 0.6 }}
         className="container mx-auto px-6 py-8"
       >
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Animated Welcome */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -58,12 +139,14 @@ export default function Home() {
           </motion.div>
 
           {/* Animated Stats Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
               whileHover={{ y: -4, scale: 1.02 }}
+              onClick={() => navigate('/carbon')}
+              className="cursor-pointer"
             >
               <Card className="glass rounded-3xl border-0 shadow-xl overflow-hidden">
                 <div className="absolute inset-0 gradient-teal-lime opacity-10" />
@@ -85,6 +168,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               whileHover={{ y: -4, scale: 1.02 }}
+              onClick={() => navigate('/dashboard')}
+              className="cursor-pointer"
             >
               <Card className="glass rounded-3xl border-0 shadow-xl overflow-hidden">
                 <div className="absolute inset-0 gradient-purple-pink opacity-10" />
@@ -106,6 +191,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               whileHover={{ y: -4, scale: 1.02 }}
+              onClick={() => navigate('/wellness')}
+              className="cursor-pointer"
             >
               <Card className="glass rounded-3xl border-0 shadow-xl overflow-hidden">
                 <div className="absolute inset-0 gradient-warm opacity-10" />
@@ -127,6 +214,8 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
               whileHover={{ y: -4, scale: 1.02 }}
+              onClick={() => navigate('/leaderboard')}
+              className="cursor-pointer"
             >
               <Card className="glass rounded-3xl border-0 shadow-xl overflow-hidden">
                 <div className="absolute inset-0 gradient-teal-lime opacity-10" />
@@ -144,12 +233,56 @@ export default function Home() {
             </motion.div>
           </div>
 
+          {/* Feature Navigation Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="mb-10"
+          >
+            <h2 className="text-2xl font-poppins font-bold mb-6 text-center">
+              Explore Features
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {featureCards.map((feature, index) => {
+                const Icon = feature.icon;
+                return (
+                  <motion.div
+                    key={feature.path}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 + index * 0.05 }}
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate(feature.path)}
+                    className="cursor-pointer"
+                  >
+                    <Card className="glass rounded-2xl border-0 shadow-lg overflow-hidden h-full hover:shadow-xl transition-shadow">
+                      <div className={`absolute inset-0 ${feature.gradient} opacity-5`} />
+                      <CardContent className="relative z-10 p-4">
+                        <div className={`p-2 rounded-xl ${feature.gradient} bg-opacity-10 w-fit mb-3`}>
+                          <Icon className={`h-6 w-6 ${feature.color}`} />
+                        </div>
+                        <h3 className="font-poppins font-bold text-sm mb-1">{feature.title}</h3>
+                        <p className="text-xs text-muted-foreground">{feature.description}</p>
+                        <div className="flex items-center mt-3 text-xs text-primary font-medium">
+                          <span>Open</span>
+                          <ArrowRight className="h-3 w-3 ml-1" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+
           {/* Enhanced Action Cards */}
           <div className="grid md:grid-cols-2 gap-8">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.7 }}
               whileHover={{ scale: 1.02 }}
             >
               <Card className="glass rounded-3xl border-0 shadow-xl overflow-hidden">
@@ -175,15 +308,17 @@ export default function Home() {
                       </Button>
                     </motion.div>
                   </Link>
-                  <motion.div
-                    whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Button variant="outline" className="w-full justify-start glass rounded-2xl h-12">
-                      <TrendingDown className="mr-3 h-5 w-5" />
-                      <span className="font-poppins font-semibold">Log Emissions</span>
-                    </Button>
-                  </motion.div>
+                  <Link to="/carbon">
+                    <motion.div
+                      whileHover={{ x: 4 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button variant="outline" className="w-full justify-start glass rounded-2xl h-12">
+                        <TrendingDown className="mr-3 h-5 w-5" />
+                        <span className="font-poppins font-semibold">Log Emissions</span>
+                      </Button>
+                    </motion.div>
+                  </Link>
                 </CardContent>
               </Card>
             </motion.div>
@@ -191,7 +326,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.8 }}
               whileHover={{ scale: 1.02 }}
             >
               <Card className="glass rounded-3xl border-0 shadow-xl overflow-hidden">
@@ -210,7 +345,7 @@ export default function Home() {
                     <motion.div
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.7 }}
+                      transition={{ delay: 0.9 }}
                       className="flex items-center p-3 bg-white/30 rounded-2xl"
                     >
                       <div className="w-3 h-3 bg-secondary rounded-full mr-3 animate-pulse"></div>
@@ -222,7 +357,7 @@ export default function Home() {
                     <motion.div
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.8 }}
+                      transition={{ delay: 1.0 }}
                       className="flex items-center p-3 bg-white/30 rounded-2xl"
                     >
                       <div className="w-3 h-3 bg-primary rounded-full mr-3 animate-pulse"></div>
@@ -234,7 +369,7 @@ export default function Home() {
                     <motion.div
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.9 }}
+                      transition={{ delay: 1.1 }}
                       className="flex items-center p-3 bg-white/30 rounded-2xl"
                     >
                       <div className="w-3 h-3 bg-warning rounded-full mr-3 animate-pulse"></div>
