@@ -18,6 +18,11 @@ import PlasticIntelligence from "./pages/PlasticIntelligence";
 import Wellness from "./pages/Wellness";
 import Leaderboard from "./pages/Leaderboard";
 import PrivateRoute from "./components/PrivateRoute";
+import CompanyDashboard from "./pages/company/CompanyDashboard";
+import CompanyPricing from "./pages/company/CompanyPricing";
+import CompanyEmployees from "./pages/company/CompanyEmployees";
+import CompanyReports from "./pages/company/CompanyReports";
+import CompanyOnboarding from "./pages/company/CompanyOnboarding";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +82,33 @@ const App = () => (
             <Route path="/profile" element={
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+            } />
+            
+            {/* Company ESG Routes */}
+            <Route path="/company/dashboard" element={
+              <PrivateRoute>
+                <CompanyDashboard />
+              </PrivateRoute>
+            } />
+            <Route path="/company/pricing" element={
+              <PrivateRoute>
+                <CompanyPricing />
+              </PrivateRoute>
+            } />
+            <Route path="/company/employees" element={
+              <PrivateRoute>
+                <CompanyEmployees />
+              </PrivateRoute>
+            } />
+            <Route path="/company/reports" element={
+              <PrivateRoute>
+                <CompanyReports />
+              </PrivateRoute>
+            } />
+            <Route path="/company/onboarding" element={
+              <PrivateRoute>
+                <CompanyOnboarding />
               </PrivateRoute>
             } />
             
