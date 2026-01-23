@@ -515,38 +515,304 @@ export type Database = {
         }
         Relationships: []
       }
+      companies: {
+        Row: {
+          created_at: string | null
+          domain: string | null
+          id: string
+          logo_url: string | null
+          max_employees: number | null
+          name: string
+          plan: Database["public"]["Enums"]["company_plan"] | null
+          settings: Json | null
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          domain?: string | null
+          id?: string
+          logo_url?: string | null
+          max_employees?: number | null
+          name: string
+          plan?: Database["public"]["Enums"]["company_plan"] | null
+          settings?: Json | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string | null
+          id?: string
+          logo_url?: string | null
+          max_employees?: number | null
+          name?: string
+          plan?: Database["public"]["Enums"]["company_plan"] | null
+          settings?: Json | null
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      company_metrics: {
+        Row: {
+          company_id: string
+          comparison: Json | null
+          computed_at: string | null
+          created_at: string | null
+          id: string
+          metrics: Json
+          period_end: string
+          period_start: string
+          period_type: string
+        }
+        Insert: {
+          company_id: string
+          comparison?: Json | null
+          computed_at?: string | null
+          created_at?: string | null
+          id?: string
+          metrics?: Json
+          period_end: string
+          period_start: string
+          period_type: string
+        }
+        Update: {
+          company_id?: string
+          comparison?: Json | null
+          computed_at?: string | null
+          created_at?: string | null
+          id?: string
+          metrics?: Json
+          period_end?: string
+          period_start?: string
+          period_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_metrics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_users: {
+        Row: {
+          company_id: string
+          created_at: string | null
+          email: string
+          id: string
+          invite_expires_at: string | null
+          invite_token: string | null
+          is_active: boolean | null
+          joined_at: string | null
+          opted_in: boolean | null
+          opted_in_at: string | null
+          role: Database["public"]["Enums"]["company_role"] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string | null
+          email: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token?: string | null
+          is_active?: boolean | null
+          joined_at?: string | null
+          opted_in?: boolean | null
+          opted_in_at?: string | null
+          role?: Database["public"]["Enums"]["company_role"] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string | null
+          email?: string
+          id?: string
+          invite_expires_at?: string | null
+          invite_token?: string | null
+          is_active?: boolean | null
+          joined_at?: string | null
+          opted_in?: boolean | null
+          opted_in_at?: string | null
+          role?: Database["public"]["Enums"]["company_role"] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_users_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_users_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       entries: {
         Row: {
+          company_id: string | null
           created_at: string | null
           data: Json
           explanation: Json | null
           footprint: Json
           id: string
           location: Json | null
+          share_with_company: boolean | null
           type: string
           user_id: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string | null
           data: Json
           explanation?: Json | null
           footprint: Json
           id?: string
           location?: Json | null
+          share_with_company?: boolean | null
           type: string
           user_id: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string | null
           data?: Json
           explanation?: Json | null
           footprint?: Json
           id?: string
           location?: Json | null
+          share_with_company?: boolean | null
           type?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "entries_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      esg_audit: {
+        Row: {
+          action: string
+          company_id: string | null
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: string | null
+          resource_id: string | null
+          resource_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          company_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          company_id?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          resource_id?: string | null
+          resource_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "esg_audit_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      esg_reports: {
+        Row: {
+          company_id: string
+          completed_at: string | null
+          created_at: string | null
+          csv_url: string | null
+          generated_by: string
+          id: string
+          metadata: Json | null
+          metrics_snapshot: Json | null
+          pdf_url: string | null
+          period_end: string
+          period_start: string
+          report_type: string
+          status: string | null
+        }
+        Insert: {
+          company_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          csv_url?: string | null
+          generated_by: string
+          id?: string
+          metadata?: Json | null
+          metrics_snapshot?: Json | null
+          pdf_url?: string | null
+          period_end: string
+          period_start: string
+          report_type: string
+          status?: string | null
+        }
+        Update: {
+          company_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          csv_url?: string | null
+          generated_by?: string
+          id?: string
+          metadata?: Json | null
+          metrics_snapshot?: Json | null
+          pdf_url?: string | null
+          period_end?: string
+          period_start?: string
+          report_type?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "esg_reports_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       health_tips: {
         Row: {
@@ -994,13 +1260,22 @@ export type Database = {
         Args: { points_to_add: number; user_id: string }
         Returns: undefined
       }
+      is_company_admin: {
+        Args: { p_company_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      is_company_member: {
+        Args: { p_company_id: string; p_user_id: string }
+        Returns: boolean
+      }
       upsert_leaderboard: {
         Args: { p_points: number; p_user_id: string }
         Returns: undefined
       }
     }
     Enums: {
-      [_ in never]: never
+      company_plan: "free" | "starter" | "pro" | "enterprise"
+      company_role: "admin" | "manager" | "employee"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1127,6 +1402,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      company_plan: ["free", "starter", "pro", "enterprise"],
+      company_role: ["admin", "manager", "employee"],
+    },
   },
 } as const
