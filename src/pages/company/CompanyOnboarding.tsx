@@ -65,6 +65,12 @@ export default function CompanyOnboarding() {
   };
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error('Please sign in to create a company');
+      navigate('/auth');
+      return;
+    }
+
     if (!formData.agreeToTerms) {
       toast.error('Please agree to the terms and conditions');
       return;
@@ -95,8 +101,8 @@ export default function CompanyOnboarding() {
         .from('company_users')
         .insert({
           company_id: company.id,
-          user_id: user?.id,
-          email: formData.adminEmail,
+          user_id: user.id,
+          email: user.email ?? formData.adminEmail,
           role: 'admin',
           is_active: true,
           opted_in: true,
@@ -112,7 +118,11 @@ export default function CompanyOnboarding() {
       navigate('/company/dashboard');
     } catch (error) {
       console.error('Onboarding error:', error);
-      toast.error('Failed to create company. Please try again.');
+      const message =
+        typeof error === 'object' && error && 'message' in error
+          ? String((error as any).message)
+          : 'Failed to create company. Please try again.';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
