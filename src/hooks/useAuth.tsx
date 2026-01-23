@@ -31,16 +31,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth event:', event);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Handle token refresh errors - sign out to clear corrupted session
+        if (event === 'TOKEN_REFRESHED' && !session) {
+          console.log('Token refresh failed, clearing session');
+          supabase.auth.signOut();
+        }
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Session error:', error);
+        // Clear corrupted session
+        supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+      } else {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
       setLoading(false);
     });
 
@@ -81,7 +96,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+    } catch (e) {
+      console.error('Sign out error:', e);
+    }
+    // Force clear state
+    setSession(null);
+    setUser(null);
   };
 
   const value = {
