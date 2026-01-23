@@ -37,10 +37,7 @@ serve(async (req) => {
 
     let query = supabase
       .from('campaigns')
-      .select(`
-        *,
-        owner:user_profiles!campaigns_owner_id_fkey(display_name, username, avatar_url)
-      `)
+      .select('*')
       .eq('visibility', 'public')
       .order('start_time', { ascending: true });
 
@@ -59,7 +56,26 @@ serve(async (req) => {
       });
     }
 
-    let result = campaigns || [];
+    // Fetch owner profiles separately (no FK relationship exists)
+    const ownerIds = [...new Set((campaigns || []).map(c => c.owner_id).filter(Boolean))];
+    let ownerMap: Record<string, any> = {};
+    
+    if (ownerIds.length > 0) {
+      const { data: owners } = await supabase
+        .from('user_profiles')
+        .select('user_id, display_name, username, avatar_url')
+        .in('user_id', ownerIds);
+      
+      owners?.forEach(o => {
+        ownerMap[o.user_id] = { display_name: o.display_name, username: o.username, avatar_url: o.avatar_url };
+      });
+    }
+
+    // Add owner info to campaigns
+    let result = (campaigns || []).map(c => ({
+      ...c,
+      owner: ownerMap[c.owner_id] || null
+    }));
 
     // Filter by distance if coordinates provided
     if (lat !== 0 && lng !== 0 && filter === 'nearby') {
