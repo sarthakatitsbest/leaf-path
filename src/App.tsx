@@ -17,12 +17,14 @@ import AIChat from "./pages/AIChat";
 import PlasticIntelligence from "./pages/PlasticIntelligence";
 import Wellness from "./pages/Wellness";
 import Leaderboard from "./pages/Leaderboard";
+import Community from "./pages/Community";
 import PrivateRoute from "./components/PrivateRoute";
 import CompanyDashboard from "./pages/company/CompanyDashboard";
 import CompanyPricing from "./pages/company/CompanyPricing";
 import CompanyEmployees from "./pages/company/CompanyEmployees";
 import CompanyReports from "./pages/company/CompanyReports";
 import CompanyOnboarding from "./pages/company/CompanyOnboarding";
+import CompanyLanding from "./pages/company/CompanyLanding";
 
 const queryClient = new QueryClient();
 
@@ -84,8 +86,18 @@ const App = () => (
                 <Profile />
               </PrivateRoute>
             } />
+            <Route path="/community" element={
+              <PrivateRoute>
+                <Community />
+              </PrivateRoute>
+            } />
             
             {/* Company ESG Routes */}
+            <Route path="/company" element={
+              <PrivateRoute>
+                <CompanyLanding />
+              </PrivateRoute>
+            } />
             <Route path="/company/dashboard" element={
               <PrivateRoute>
                 <CompanyDashboard />
