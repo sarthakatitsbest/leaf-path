@@ -78,12 +78,13 @@ export default function CompanyOnboarding() {
 
     setLoading(true);
     try {
-      // Create company in database
+      // Create company in database with owner_id set to current user
       const { data: company, error: companyError } = await supabase
         .from('companies')
         .insert({
           name: formData.companyName,
           domain: formData.domain,
+          owner_id: user.id, // REQUIRED: Set the owner for RLS to pass
           plan: 'free',
           settings: {
             industry: formData.industry,

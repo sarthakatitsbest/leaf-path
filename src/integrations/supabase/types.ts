@@ -523,6 +523,7 @@ export type Database = {
           logo_url: string | null
           max_employees: number | null
           name: string
+          owner_id: string | null
           plan: Database["public"]["Enums"]["company_plan"] | null
           settings: Json | null
           stripe_customer_id: string | null
@@ -537,6 +538,7 @@ export type Database = {
           logo_url?: string | null
           max_employees?: number | null
           name: string
+          owner_id?: string | null
           plan?: Database["public"]["Enums"]["company_plan"] | null
           settings?: Json | null
           stripe_customer_id?: string | null
@@ -551,6 +553,7 @@ export type Database = {
           logo_url?: string | null
           max_employees?: number | null
           name?: string
+          owner_id?: string | null
           plan?: Database["public"]["Enums"]["company_plan"] | null
           settings?: Json | null
           stripe_customer_id?: string | null
