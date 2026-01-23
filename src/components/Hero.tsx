@@ -91,6 +91,7 @@ const Hero: React.FC = () => {
               <Button 
                 variant="outline" 
                 size="lg"
+                onClick={() => navigate('/community')}
                 className="glass font-poppins font-semibold px-8 py-6 text-lg rounded-2xl hover:bg-primary/10"
               >
                 <Users className="mr-2 h-5 w-5" />

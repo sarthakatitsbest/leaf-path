@@ -16,7 +16,8 @@ import {
   Trophy,
   Menu,
   X,
-  Leaf
+  Leaf,
+  Building2
 } from 'lucide-react';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -25,7 +26,7 @@ const navItems = [
   { path: '/', label: 'Home', icon: Home },
   { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
   { path: '/carbon', label: 'Carbon Tracker', icon: TrendingDown },
-  { path: '/campaigns', label: 'Campaigns', icon: Users },
+  { path: '/community', label: 'Community', icon: Users },
   { path: '/map', label: 'Eco Map', icon: MapPin },
   { path: '/plastic', label: 'Plastic AI', icon: Recycle },
   { path: '/wellness', label: 'Wellness', icon: Heart },
@@ -79,8 +80,19 @@ export const Navbar = () => {
             })}
           </div>
 
-          {/* Right Side - User & Mobile Menu */}
+          {/* Right Side - ESG, User & Mobile Menu */}
           <div className="flex items-center gap-3">
+            {/* ESG Link */}
+            <Link to="/company" className="hidden md:block">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 hover:border-blue-500/40 transition-colors"
+              >
+                <Building2 className="h-4 w-4 text-blue-500" />
+                <span className="text-blue-600 dark:text-blue-400 font-medium">For Business</span>
+              </motion.div>
+            </Link>
             {/* Profile Link */}
             <Link to="/profile" className="hidden sm:block">
               <motion.div
@@ -157,6 +169,18 @@ export const Navbar = () => {
 
                   {/* Mobile Footer */}
                   <div className="border-t p-4 space-y-3">
+                    {/* ESG Link Mobile */}
+                    <Link 
+                      to="/company" 
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
+                    >
+                      <Building2 className="h-5 w-5 text-blue-500" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-blue-600 dark:text-blue-400">For Business</p>
+                        <p className="text-xs text-muted-foreground">Company ESG Dashboard</p>
+                      </div>
+                    </Link>
                     <Link 
                       to="/profile" 
                       onClick={() => setMobileOpen(false)}
