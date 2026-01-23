@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Calendar, Users, Clock, CheckCircle2 } from 'lucide-react';
+import { MapPin, Calendar, Users, Clock, CheckCircle2, Settings } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Campaign {
@@ -30,6 +30,7 @@ interface CampaignCardProps {
   campaign: Campaign;
   onJoin?: (campaignId: string) => void;
   onCheckIn?: (campaignId: string) => void;
+  onManage?: (campaignId: string) => void;
   onViewDetails?: (campaignId: string) => void;
   isJoining?: boolean;
 }
@@ -38,6 +39,7 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
   campaign,
   onJoin,
   onCheckIn,
+  onManage,
   onViewDetails,
   isJoining
 }) => {
@@ -143,7 +145,7 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
         </div>
       </CardContent>
       
-      <CardFooter className="p-4 pt-0 gap-2">
+      <CardFooter className="p-4 pt-0 gap-2 flex-wrap">
         {onViewDetails && (
           <Button 
             variant="outline" 
@@ -151,6 +153,18 @@ export const CampaignCard: React.FC<CampaignCardProps> = ({
             onClick={() => onViewDetails(campaign.id)}
           >
             View Details
+          </Button>
+        )}
+        
+        {/* Manage button for owners */}
+        {campaign.is_owner && onManage && (
+          <Button 
+            variant="outline"
+            className="flex-1 border-purple-300 text-purple-600 hover:bg-purple-50"
+            onClick={() => onManage(campaign.id)}
+          >
+            <Settings className="w-4 h-4 mr-2" />
+            Manage
           </Button>
         )}
         

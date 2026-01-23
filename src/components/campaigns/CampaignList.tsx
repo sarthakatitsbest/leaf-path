@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CampaignCard } from './CampaignCard';
 import { CreateCampaignDialog } from './CreateCampaignDialog';
 import { CampaignCheckInDialog } from './CampaignCheckInDialog';
+import { CampaignManagement } from './CampaignManagement';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,6 +21,7 @@ interface Campaign {
   start_time: string;
   end_time: string;
   capacity: number;
+  owner_id: string;
   participant_count?: number;
   distance_km?: number;
   user_status?: string;
@@ -36,6 +38,7 @@ export const CampaignList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [joiningId, setJoiningId] = useState<string | null>(null);
   const [checkInCampaign, setCheckInCampaign] = useState<Campaign | null>(null);
+  const [manageCampaign, setManageCampaign] = useState<Campaign | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('all');
@@ -202,6 +205,13 @@ export const CampaignList: React.FC = () => {
     toast({ title: '✅ Checked in successfully!' });
   };
 
+  const handleManage = (campaignId: string) => {
+    const campaign = campaigns.find(c => c.id === campaignId);
+    if (campaign) {
+      setManageCampaign(campaign);
+    }
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -258,6 +268,7 @@ export const CampaignList: React.FC = () => {
                   campaign={campaign}
                   onJoin={handleJoin}
                   onCheckIn={handleCheckIn}
+                  onManage={handleManage}
                   isJoining={joiningId === campaign.id}
                 />
               ))}
@@ -272,6 +283,17 @@ export const CampaignList: React.FC = () => {
           open={!!checkInCampaign}
           onClose={() => setCheckInCampaign(null)}
           onSuccess={handleCheckInComplete}
+        />
+      )}
+
+      {manageCampaign && (
+        <CampaignManagement
+          campaign={manageCampaign}
+          open={!!manageCampaign}
+          onClose={() => {
+            setManageCampaign(null);
+            fetchCampaigns(activeTab);
+          }}
         />
       )}
     </Card>
