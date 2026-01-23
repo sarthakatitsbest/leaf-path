@@ -81,9 +81,9 @@ export const Navbar = () => {
           </div>
 
           {/* Right Side - ESG, User & Mobile Menu */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* ESG Link */}
-            <Link to="/company" className="hidden md:block">
+            <Link to="/company" className="hidden lg:block">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -94,7 +94,7 @@ export const Navbar = () => {
               </motion.div>
             </Link>
             {/* Profile Link */}
-            <Link to="/profile" className="hidden sm:block">
+            <Link to="/profile" className="hidden md:block">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -105,21 +105,21 @@ export const Navbar = () => {
                 }`}
               >
                 <User className="h-4 w-4" />
-                <span className="hidden md:inline max-w-[120px] truncate">
+                <span className="max-w-[100px] truncate">
                   {user.email?.split('@')[0]}
                 </span>
               </motion.div>
             </Link>
 
-            {/* Sign Out Button */}
+            {/* Sign Out Button - Desktop only */}
             <Button 
               variant="outline" 
               size="sm" 
               onClick={signOut}
-              className="hidden sm:flex rounded-xl"
+              className="hidden md:flex items-center rounded-xl shrink-0"
             >
-              <LogOut className="h-4 w-4 mr-2" />
-              <span className="hidden md:inline">Sign Out</span>
+              <LogOut className="h-4 w-4 md:mr-2" />
+              <span className="hidden lg:inline">Sign Out</span>
             </Button>
 
             {/* Mobile Menu */}
@@ -168,40 +168,40 @@ export const Navbar = () => {
                   </div>
 
                   {/* Mobile Footer */}
-                  <div className="border-t p-4 space-y-3">
+                  <div className="border-t p-4 space-y-2 pb-safe">
                     {/* ESG Link Mobile */}
                     <Link 
                       to="/company" 
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20"
                     >
-                      <Building2 className="h-5 w-5 text-blue-500" />
-                      <div className="flex-1">
+                      <Building2 className="h-5 w-5 text-blue-500 shrink-0" />
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-blue-600 dark:text-blue-400">For Business</p>
-                        <p className="text-xs text-muted-foreground">Company ESG Dashboard</p>
+                        <p className="text-xs text-muted-foreground truncate">Company ESG Dashboard</p>
                       </div>
                     </Link>
                     <Link 
                       to="/profile" 
                       onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl bg-accent/30 hover:bg-accent/50"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-accent/30 hover:bg-accent/50"
                     >
-                      <User className="h-5 w-5" />
-                      <div className="flex-1">
+                      <User className="h-5 w-5 shrink-0" />
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">Profile</p>
                         <p className="text-xs text-muted-foreground truncate">{user.email}</p>
                       </div>
                     </Link>
                     <Button 
                       variant="outline" 
-                      className="w-full rounded-xl" 
+                      className="w-full rounded-xl justify-center" 
                       onClick={() => {
                         signOut();
                         setMobileOpen(false);
                       }}
                     >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
+                      <LogOut className="h-4 w-4 mr-2 shrink-0" />
+                      <span>Sign Out</span>
                     </Button>
                   </div>
                 </div>
