@@ -82,9 +82,32 @@ export default function PlasticClassifier() {
       setOcrProgress(75);
 
       // Call classification API
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({ title: 'Please login', variant: 'destructive' });
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        // Try to refresh the session
+        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshError || !refreshedSession) {
+          toast({ 
+            title: 'Session expired', 
+            description: 'Please sign out and sign back in',
+            variant: 'destructive' 
+          });
+          setIsProcessing(false);
+          return;
+        }
+      }
+
+      // Get the latest session
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      const accessToken = currentSession?.access_token;
+      
+      if (!accessToken) {
+        toast({ 
+          title: 'Not logged in', 
+          description: 'Please login to use this feature',
+          variant: 'destructive' 
+        });
+        setIsProcessing(false);
         return;
       }
 
@@ -94,7 +117,7 @@ export default function PlasticClassifier() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
+            'Authorization': `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             imageBase64: base64,
