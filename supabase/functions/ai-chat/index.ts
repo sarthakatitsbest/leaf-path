@@ -1,4 +1,3 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
@@ -7,35 +6,19 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Cache implementation with 12-24h TTL
-const cache = new Map<string, { data: any; expires: number }>();
-
-const cleanCache = () => {
-  const now = Date.now();
-  for (const [key, value] of cache.entries()) {
-    if (now > value.expires) {
-      cache.delete(key);
-    }
-  }
-};
-
-const getCacheKey = (userId: string, prompt: string): string => {
-  // Create deterministic hash-like key
-  const combined = userId + ':' + prompt.toLowerCase().trim();
-  return btoa(combined).slice(0, 32);
-};
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    cleanCache(); // Clean expired entries
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
+    }
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -67,17 +50,6 @@ serve(async (req) => {
       });
     }
 
-    // Check cache first
-    const cacheKey = getCacheKey(user.id, message);
-    const cached = cache.get(cacheKey);
-    if (cached && Date.now() < cached.expires) {
-      console.log('Cache hit for AI chat request');
-      return new Response(JSON.stringify({ reply: cached.data }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Build comprehensive prompt for one OpenAI call
     const systemPrompt = `You are EcoPulse, an AI eco-advisor helping users reduce their carbon footprint. 
 Be concise, actionable, and encouraging. Provide specific recommendations.`;
 
@@ -85,41 +57,45 @@ Be concise, actionable, and encouraging. Provide specific recommendations.`;
 Recent Activity: ${recentData ? JSON.stringify(recentData).slice(0, 200) : 'No recent activity'}
 User Question: ${message}
 
-Provide a helpful, specific response about carbon reduction, eco-tips, or sustainable living in under 140 characters.`;
+Provide a helpful, specific response about carbon reduction, eco-tips, or sustainable living.`;
 
-    // Single OpenAI call with specified parameters
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemini-3-flash-preview',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: contextPrompt }
         ],
-        max_tokens: 160,
-        temperature: 0.0,
+        max_tokens: 300,
+        temperature: 0.3,
       }),
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded, please try again later.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: 'AI credits exhausted. Please add credits.' }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
       const errorText = await response.text();
-      console.error('OpenAI API error:', errorText);
+      console.error('AI gateway error:', response.status, errorText);
       throw new Error('AI service temporarily unavailable');
     }
 
     const data = await response.json();
     const reply = data.choices[0]?.message?.content || 'I apologize, but I cannot provide a response right now.';
-
-    // Cache the result for 12-24 hours (randomized to prevent cache stampede)
-    const cacheHours = 12 + Math.random() * 12; // 12-24 hours
-    const expires = Date.now() + (cacheHours * 60 * 60 * 1000);
-    cache.set(cacheKey, { data: reply, expires });
-
-    console.log(`AI chat response cached for ${cacheHours.toFixed(1)} hours`);
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
