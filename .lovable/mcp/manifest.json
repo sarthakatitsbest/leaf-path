@@ -1,0 +1,157 @@
+{
+  "version": 1,
+  "sdk_version": "0.28.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://fbmphwihmfzbbyavgusl.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "ecopulse-mcp",
+      "version": "0.1.0",
+      "title": "EcoPulse"
+    },
+    "tools": [
+      {
+        "name": "get_eco_profile",
+        "title": "Get eco profile",
+        "description": "Get the signed-in user's EcoPulse profile: display name, eco points and current streak.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_carbon_logs",
+        "title": "List carbon logs",
+        "description": "List the signed-in user's most recent daily carbon footprint logs, newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "How many logs to return (default 14, max 100)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "log_carbon_entry",
+        "title": "Log carbon entry",
+        "description": "Create or update the signed-in user's carbon footprint log for a given date (kg CO2e per category).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "log_date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+              "description": "Date of the log in YYYY-MM-DD format."
+            },
+            "travel_emissions": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Travel emissions in kg CO2e."
+            },
+            "energy_emissions": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Energy emissions in kg CO2e."
+            },
+            "food_emissions": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Food emissions in kg CO2e."
+            }
+          },
+          "required": [
+            "log_date"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_campaigns",
+        "title": "List go-green campaigns",
+        "description": "List upcoming go-green campaigns (cleanups, plantations, recycling drives) visible to the signed-in user.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Filter campaigns by city name."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max campaigns (default 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "join_campaign",
+        "title": "Join a campaign",
+        "description": "Register the signed-in user as a participant of a go-green campaign.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "campaign_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID of the campaign to join (from list_campaigns)."
+            }
+          },
+          "required": [
+            "campaign_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

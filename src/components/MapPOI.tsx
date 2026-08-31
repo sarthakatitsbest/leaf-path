@@ -279,7 +279,7 @@ export default function MapPOI() {
     setPlacesService(placesServiceInstance);
 
     // Debounced search on map idle
-    let idleTimer: NodeJS.Timeout;
+    let idleTimer: ReturnType<typeof setTimeout>;
     mapInstance.addListener('idle', () => {
       clearTimeout(idleTimer);
       idleTimer = setTimeout(() => {
