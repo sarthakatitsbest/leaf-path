@@ -10,8 +10,11 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
     const reply = await nvidiaChat(
-      [{ role: 'user', content: 'Reply with the single word: ok' }],
-      { maxTokens: 16, temperature: 0 },
+      [
+        { role: 'system', content: 'You are EcoPulse Pitch Coach. Output ONLY a single valid JSON object. No markdown, no reasoning.' },
+        { role: 'user', content: 'Analyse: "Plastic sachets are dumped near our river and nobody collects them". Return JSON: {"category":"plastic_hotspot|plastic_type|brand|management|other","problem":"10-20 words","solution":"15-25 words","metric":"1 metric with source hint","confidence":0-100}' },
+      ],
+      { maxTokens: 400, temperature: 0.4 },
     );
     return new Response(JSON.stringify({ ok: true, reply }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
