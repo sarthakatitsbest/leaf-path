@@ -2,7 +2,9 @@
 // The API key lives ONLY in the Edge Function environment. Never returned to clients.
 
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-export const NVIDIA_MODEL = "nvidia/nemotron-3-ultra-550b-a55b";
+// Fast, low-latency model for real-time text features.
+export const NVIDIA_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b";
+const DEFAULT_TIMEOUT_MS = 30000;
 
 export class NvidiaError extends Error {
   status: number;
