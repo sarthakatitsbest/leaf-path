@@ -126,11 +126,12 @@ export default function PlasticPitchAnalyzer() {
         }
       );
 
-      if (!response.ok) {
-        throw new Error('Analysis failed');
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok || !data || data.error) {
+        throw new Error(data?.error || 'Analysis failed');
       }
 
-      const data = await response.json();
       setResult(data);
       
       toast({
@@ -141,9 +142,10 @@ export default function PlasticPitchAnalyzer() {
       console.error('Analysis error:', error);
       toast({
         title: 'Analysis failed',
-        description: 'Please try again',
+        description: error instanceof Error ? error.message : 'Please try again',
         variant: 'destructive',
       });
+
     } finally {
       setIsAnalyzing(false);
     }
