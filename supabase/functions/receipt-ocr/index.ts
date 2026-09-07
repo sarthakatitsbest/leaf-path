@@ -162,7 +162,7 @@ Format: item|emissions|confidence (one per line)`;
         { role: 'system', content: 'You are a carbon footprint expert. Provide concise, accurate emissions data. Output only the requested lines, no commentary.' },
         { role: 'user', content: prompt },
       ],
-      { maxTokens: 300, temperature: 0 },
+      { maxTokens: 500, temperature: 0.6, timeoutMs: 25000 },
     );
 
 

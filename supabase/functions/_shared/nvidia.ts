@@ -2,7 +2,9 @@
 // The API key lives ONLY in the Edge Function environment. Never returned to clients.
 
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-export const NVIDIA_MODEL = "nvidia/nemotron-3-ultra-550b-a55b";
+// Fast, low-latency model for real-time text features.
+export const NVIDIA_MODEL = "nvidia/nemotron-3.5-lightning-30b-a3b";
+const DEFAULT_TIMEOUT_MS = 30000;
 
 export class NvidiaError extends Error {
   status: number;
@@ -27,17 +29,21 @@ export function stripReasoning(text: string): string {
 
 export async function nvidiaChat(
   messages: ChatMessage[],
-  opts: { maxTokens?: number; temperature?: number } = {},
+  opts: { maxTokens?: number; temperature?: number; timeoutMs?: number } = {},
 ): Promise<string> {
   const nvidiaApiKey = Deno.env.get("NVIDIA_API_KEY");
   if (!nvidiaApiKey) {
     throw new NvidiaError("AI service is not configured.", 500);
   }
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), opts.timeoutMs ?? DEFAULT_TIMEOUT_MS);
+
   let response: Response;
   try {
     response = await fetch(NVIDIA_URL, {
       method: "POST",
+      signal: controller.signal,
       headers: {
         Authorization: `Bearer ${nvidiaApiKey}`,
         "Content-Type": "application/json",
@@ -45,14 +51,24 @@ export async function nvidiaChat(
       body: JSON.stringify({
         model: NVIDIA_MODEL,
         messages,
-        temperature: opts.temperature ?? 0.5,
+        temperature: opts.temperature ?? 0.6,
         max_tokens: opts.maxTokens ?? 600,
         stream: false,
+        // Never surface internal reasoning to clients.
+        chat_template_kwargs: { thinking: false },
       }),
     });
   } catch (e) {
-    console.error("NVIDIA API network error:", e);
-    throw new NvidiaError("AI service is temporarily unavailable. Please try again.", 503);
+    const aborted = e instanceof DOMException && e.name === "AbortError";
+    console.error("NVIDIA API network error:", aborted ? "timeout" : e);
+    throw new NvidiaError(
+      aborted
+        ? "AI took too long to respond. Please try again."
+        : "AI service is temporarily unavailable. Please try again.",
+      aborted ? 504 : 503,
+    );
+  } finally {
+    clearTimeout(timer);
   }
 
   if (!response.ok) {
