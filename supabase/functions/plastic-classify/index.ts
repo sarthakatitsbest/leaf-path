@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { nvidiaChat, extractJson } from "../_shared/nvidia.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -83,6 +84,33 @@ serve(async (req) => {
         if (jsonMatch) {
           result = JSON.parse(jsonMatch[0]);
         }
+      }
+    }
+
+    // Text-only path: NVIDIA Nemotron (text model, never receives images)
+    if (!result && ocrText && ocrText.trim().length > 0) {
+      try {
+        const content = await nvidiaChat(
+          [
+            {
+              role: 'system',
+              content: 'Classify plastic packaging from label/OCR text. Return ONLY JSON: {"type":"single-use|multi-layer|PET|HDPE|PVC|film|unknown","recyclable":true|false,"confidence":0-100,"details":"brief description"}',
+            },
+            { role: 'user', content: `Packaging text: "${String(ocrText).slice(0, 500)}"` },
+          ],
+          { maxTokens: 200, temperature: 0.1 },
+        );
+        const parsed = extractJson<any>(content);
+        if (parsed && parsed.type) {
+          result = {
+            type: parsed.type,
+            recyclable: !!parsed.recyclable,
+            confidence: Number(parsed.confidence) || 70,
+            details: String(parsed.details || 'Classified from label text'),
+          };
+        }
+      } catch (e) {
+        console.error('NVIDIA text classification failed:', e instanceof Error ? e.message : e);
       }
     }
 
