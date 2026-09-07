@@ -39,7 +39,7 @@ serve(async (req) => {
       });
     }
 
-    const { message, userProfile, recentData } = await req.json();
+    const { message, userProfile, recentData, history } = await req.json();
 
     if (!message) {
       return new Response(JSON.stringify({ error: 'Message is required' }), {
