@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { nvidiaChat, extractJson } from "../_shared/nvidia.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,7 +18,7 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const openaiKey = Deno.env.get('OPENAI_API_KEY');
+    const nvidiaKey = Deno.env.get('NVIDIA_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -58,60 +59,54 @@ serve(async (req) => {
       });
     }
 
-    // LLM prompt - minimal tokens for cost efficiency
-    const systemPrompt = `You are EcoPulse Pitch Coach. Output only JSON in exact schema. Be concise.`;
-    
-    const userPrompt = `Classify and rewrite.
+    // LLM prompt - concise, structured, investor-ready
+    const systemPrompt = `You are EcoPulse Pitch Coach. You analyse sustainability pitches and rewrite them into investor-ready, judge-ready lines.
+Output ONLY a single valid JSON object matching the requested schema. No markdown, no commentary, no reasoning.`;
+
+    const userPrompt = `Analyse this sustainability pitch: identify the problem, the proposed solution, environmental impact, and anything missing or unclear. Then rewrite it with stronger, more professional wording.
 
 Text: "${transcript}"
 ${location ? `Location: ${location.lat},${location.lng}` : ''}
 
-Return JSON:
+Return JSON exactly in this schema:
 {
  "category":"plastic_hotspot|plastic_type|brand|management|other",
- "problem":"10-20 words investor-ready problem",
- "solution":"15-25 words investor-ready solution",
+ "problem":"10-20 words investor-ready problem statement",
+ "solution":"15-25 words investor-ready solution statement",
  "metric":"1 suggested metric with source hint",
  "confidence":0-100
 }`;
 
-    let result;
+    let result: any = null;
 
-    if (openaiKey) {
-      // Call OpenAI
-      const openaiResp = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
+    if (nvidiaKey) {
+      try {
+        const content = await nvidiaChat(
+          [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
           ],
-          temperature: 0.1,
-          max_tokens: 200,
-        }),
-      });
-
-      if (!openaiResp.ok) {
-        console.error('OpenAI error:', await openaiResp.text());
-        throw new Error('AI service error');
+          { maxTokens: 400, temperature: 0.4 },
+        );
+        const parsed = extractJson<any>(content);
+        if (parsed && parsed.problem && parsed.solution) {
+          result = {
+            category: parsed.category || 'other',
+            problem: String(parsed.problem),
+            solution: String(parsed.solution),
+            metric: String(parsed.metric || 'kg plastic waste per month (city sanitation reports)'),
+            confidence: Number(parsed.confidence) || 75,
+          };
+        } else {
+          console.error('NVIDIA response could not be parsed as JSON');
+        }
+      } catch (e) {
+        console.error('NVIDIA pitch analysis failed:', e instanceof Error ? e.message : e);
       }
+    }
 
-      const openaiData = await openaiResp.json();
-      const content = openaiData.choices?.[0]?.message?.content || '';
-      
-      // Parse JSON from response
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        result = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error('Invalid AI response format');
-      }
-    } else {
+    if (!result) {
+
       // Fallback: deterministic classification without AI
       const lowerText = transcript.toLowerCase();
       let category = 'other';
