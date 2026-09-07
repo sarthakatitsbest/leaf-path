@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { nvidiaChat } from '../_shared/nvidia.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
@@ -135,8 +136,7 @@ const classifyWithRules = (items: Array<{ item: string; quantity: number }>): {
 };
 
 const classifyWithAI = async (
-  ambiguousItems: Array<{ item: string; quantity: number }>,
-  openaiApiKey: string
+  ambiguousItems: Array<{ item: string; quantity: number }>
 ): Promise<CarbonItem[]> => {
   if (ambiguousItems.length === 0) return [];
   
@@ -157,30 +157,15 @@ Be conservative with estimates. Use these baselines:
 Format: item|emissions|confidence (one per line)`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,  
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: 'You are a carbon footprint expert. Provide concise, accurate emissions data.' },
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: 200,
-        temperature: 0.0,
-      }),
-    });
+    const reply = await nvidiaChat(
+      [
+        { role: 'system', content: 'You are a carbon footprint expert. Provide concise, accurate emissions data. Output only the requested lines, no commentary.' },
+        { role: 'user', content: prompt },
+      ],
+      { maxTokens: 300, temperature: 0 },
+    );
 
-    if (!response.ok) {
-      console.error('OpenAI API error:', await response.text());
-      return []; // Return empty array on error, fallback to defaults
-    }
 
-    const data = await response.json();
-    const reply = data.choices[0]?.message?.content || '';
     
     const classified: CarbonItem[] = [];
     const lines = reply.split('\n').filter(line => line.includes('|'));
@@ -224,7 +209,6 @@ serve(async (req) => {
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -270,8 +254,8 @@ serve(async (req) => {
     const { classified: ruleBasedItems, ambiguous: ambiguousItems } = classifyWithRules(parsedItems);
     console.log(`Rule-based classification: ${ruleBasedItems.length} classified, ${ambiguousItems.length} ambiguous`);
 
-    // Step 4: Use AI only for ambiguous items (single OpenAI call)
-    const aiClassifiedItems = await classifyWithAI(ambiguousItems, openaiApiKey);
+    // Step 4: Use AI only for ambiguous items (single NVIDIA call)
+    const aiClassifiedItems = await classifyWithAI(ambiguousItems);
     console.log(`AI classified ${aiClassifiedItems.length} ambiguous items`);
 
     // Step 5: Combine all results
