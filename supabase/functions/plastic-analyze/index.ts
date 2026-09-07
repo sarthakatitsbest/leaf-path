@@ -86,7 +86,7 @@ Return JSON exactly in this schema:
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
           ],
-          { maxTokens: 400, temperature: 0.4 },
+          { maxTokens: 800, temperature: 0.6, timeoutMs: 30000 },
         );
         const parsed = extractJson<any>(content);
         if (parsed && parsed.problem && parsed.solution) {

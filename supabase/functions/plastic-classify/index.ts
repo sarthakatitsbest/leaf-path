@@ -98,7 +98,7 @@ serve(async (req) => {
             },
             { role: 'user', content: `Packaging text: "${String(ocrText).slice(0, 500)}"` },
           ],
-          { maxTokens: 200, temperature: 0.1 },
+          { maxTokens: 500, temperature: 0.6, timeoutMs: 25000 },
         );
         const parsed = extractJson<any>(content);
         if (parsed && parsed.type) {

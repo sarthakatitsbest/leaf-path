@@ -72,7 +72,7 @@ Provide a helpful, specific response about carbon reduction, eco-tips, or sustai
         ...priorTurns,
         { role: 'user', content: contextPrompt },
       ],
-      { maxTokens: 400, temperature: 0.4 },
+      { maxTokens: 600, temperature: 0.6, timeoutMs: 25000 },
     );
 
     return new Response(JSON.stringify({ reply }), {
