@@ -14,6 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
+      aggregated_city_metrics: {
+        Row: {
+          active_citizens: number
+          campaign_participation: number
+          city: string | null
+          computed_at: string
+          created_at: string
+          eco_score: number
+          estimated_carbon_reduction: number
+          id: string
+          metrics: Json
+          org_id: string
+          period_end: string
+          period_start: string
+          period_type: string
+          plastic_reports: number
+          total_actions: number
+        }
+        Insert: {
+          active_citizens?: number
+          campaign_participation?: number
+          city?: string | null
+          computed_at?: string
+          created_at?: string
+          eco_score?: number
+          estimated_carbon_reduction?: number
+          id?: string
+          metrics?: Json
+          org_id: string
+          period_end: string
+          period_start: string
+          period_type?: string
+          plastic_reports?: number
+          total_actions?: number
+        }
+        Update: {
+          active_citizens?: number
+          campaign_participation?: number
+          city?: string | null
+          computed_at?: string
+          created_at?: string
+          eco_score?: number
+          estimated_carbon_reduction?: number
+          id?: string
+          metrics?: Json
+          org_id?: string
+          period_end?: string
+          period_start?: string
+          period_type?: string
+          plastic_reports?: number
+          total_actions?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aggregated_city_metrics_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "government_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      area_metrics: {
+        Row: {
+          area_name: string
+          center_lat: number | null
+          center_lng: number | null
+          created_at: string
+          engagement_score: number
+          estimated_carbon_reduction: number
+          id: string
+          org_id: string
+          participants: number
+          period_end: string
+          period_start: string
+          plastic_reports: number
+          trend: Json
+          ward_code: string | null
+          waste_activity_index: number
+        }
+        Insert: {
+          area_name: string
+          center_lat?: number | null
+          center_lng?: number | null
+          created_at?: string
+          engagement_score?: number
+          estimated_carbon_reduction?: number
+          id?: string
+          org_id: string
+          participants?: number
+          period_end: string
+          period_start: string
+          plastic_reports?: number
+          trend?: Json
+          ward_code?: string | null
+          waste_activity_index?: number
+        }
+        Update: {
+          area_name?: string
+          center_lat?: number | null
+          center_lng?: number | null
+          created_at?: string
+          engagement_score?: number
+          estimated_carbon_reduction?: number
+          id?: string
+          org_id?: string
+          participants?: number
+          period_end?: string
+          period_start?: string
+          plastic_reports?: number
+          trend?: Json
+          ward_code?: string | null
+          waste_activity_index?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "area_metrics_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "government_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auto_estimates: {
         Row: {
           carbon_estimate: number | null
@@ -222,6 +346,69 @@ export type Database = {
             columns: ["campaign_id"]
             isOneToOne: false
             referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_participation: {
+        Row: {
+          action_count: number
+          area: string | null
+          breakdown: Json
+          campaign_id: string
+          created_at: string
+          estimated_carbon_reduction: number
+          id: string
+          org_id: string
+          participant_count: number
+          period_end: string
+          period_start: string
+          repeat_participation_rate: number
+          updated_at: string
+        }
+        Insert: {
+          action_count?: number
+          area?: string | null
+          breakdown?: Json
+          campaign_id: string
+          created_at?: string
+          estimated_carbon_reduction?: number
+          id?: string
+          org_id: string
+          participant_count?: number
+          period_end: string
+          period_start: string
+          repeat_participation_rate?: number
+          updated_at?: string
+        }
+        Update: {
+          action_count?: number
+          area?: string | null
+          breakdown?: Json
+          campaign_id?: string
+          created_at?: string
+          estimated_carbon_reduction?: number
+          id?: string
+          org_id?: string
+          participant_count?: number
+          period_end?: string
+          period_start?: string
+          repeat_participation_rate?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_participation_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "sustainability_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_participation_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "government_organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -817,6 +1004,166 @@ export type Database = {
           },
         ]
       }
+      government_organizations: {
+        Row: {
+          city: string | null
+          contact_email: string | null
+          country: string | null
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          org_type: Database["public"]["Enums"]["gov_org_type"]
+          owner_id: string
+          plan: string
+          settings: Json
+          state: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          city?: string | null
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          org_type?: Database["public"]["Enums"]["gov_org_type"]
+          owner_id: string
+          plan?: string
+          settings?: Json
+          state?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          city?: string | null
+          contact_email?: string | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          org_type?: Database["public"]["Enums"]["gov_org_type"]
+          owner_id?: string
+          plan?: string
+          settings?: Json
+          state?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      government_reports: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          csv_url: string | null
+          generated_by: string
+          id: string
+          org_id: string
+          pdf_url: string | null
+          period_end: string
+          period_start: string
+          report_type: string
+          snapshot: Json
+          status: string
+          title: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          csv_url?: string | null
+          generated_by: string
+          id?: string
+          org_id: string
+          pdf_url?: string | null
+          period_end: string
+          period_start: string
+          report_type?: string
+          snapshot?: Json
+          status?: string
+          title?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          csv_url?: string | null
+          generated_by?: string
+          id?: string
+          org_id?: string
+          pdf_url?: string | null
+          period_end?: string
+          period_start?: string
+          report_type?: string
+          snapshot?: Json
+          status?: string
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "government_reports_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "government_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      government_users: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          invite_token: string | null
+          is_active: boolean
+          joined_at: string | null
+          org_id: string
+          role: Database["public"]["Enums"]["gov_role"]
+          updated_at: string
+          user_id: string | null
+          ward: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          invite_token?: string | null
+          is_active?: boolean
+          joined_at?: string | null
+          org_id: string
+          role?: Database["public"]["Enums"]["gov_role"]
+          updated_at?: string
+          user_id?: string | null
+          ward?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          invite_token?: string | null
+          is_active?: boolean
+          joined_at?: string | null
+          org_id?: string
+          role?: Database["public"]["Enums"]["gov_role"]
+          updated_at?: string
+          user_id?: string | null
+          ward?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "government_users_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "government_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       health_tips: {
         Row: {
           activity_suggestions: Json | null
@@ -1122,6 +1469,68 @@ export type Database = {
         }
         Relationships: []
       }
+      sustainability_campaigns: {
+        Row: {
+          area: string | null
+          category: string
+          created_at: string
+          created_by: string
+          description: string | null
+          end_date: string
+          goal: string | null
+          id: string
+          metadata: Json
+          name: string
+          org_id: string
+          start_date: string
+          status: string
+          target_participation: number
+          updated_at: string
+        }
+        Insert: {
+          area?: string | null
+          category?: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_date: string
+          goal?: string | null
+          id?: string
+          metadata?: Json
+          name: string
+          org_id: string
+          start_date: string
+          status?: string
+          target_participation?: number
+          updated_at?: string
+        }
+        Update: {
+          area?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_date?: string
+          goal?: string | null
+          id?: string
+          metadata?: Json
+          name?: string
+          org_id?: string
+          start_date?: string
+          status?: string
+          target_participation?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sustainability_campaigns_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "government_organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           avatar_url: string | null
@@ -1271,6 +1680,14 @@ export type Database = {
         Args: { p_company_id: string; p_user_id: string }
         Returns: boolean
       }
+      is_gov_admin: {
+        Args: { p_org_id: string; p_user_id: string }
+        Returns: boolean
+      }
+      is_gov_member: {
+        Args: { p_org_id: string; p_user_id: string }
+        Returns: boolean
+      }
       upsert_leaderboard: {
         Args: { p_points: number; p_user_id: string }
         Returns: undefined
@@ -1279,6 +1696,18 @@ export type Database = {
     Enums: {
       company_plan: "free" | "starter" | "pro" | "enterprise"
       company_role: "admin" | "manager" | "employee"
+      gov_org_type:
+        | "municipal"
+        | "smart_city"
+        | "district"
+        | "state"
+        | "university"
+      gov_role:
+        | "super_admin"
+        | "gov_admin"
+        | "city_admin"
+        | "ward_admin"
+        | "analyst"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1408,6 +1837,20 @@ export const Constants = {
     Enums: {
       company_plan: ["free", "starter", "pro", "enterprise"],
       company_role: ["admin", "manager", "employee"],
+      gov_org_type: [
+        "municipal",
+        "smart_city",
+        "district",
+        "state",
+        "university",
+      ],
+      gov_role: [
+        "super_admin",
+        "gov_admin",
+        "city_admin",
+        "ward_admin",
+        "analyst",
+      ],
     },
   },
 } as const
